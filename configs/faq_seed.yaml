@@ -1,3 +1,45 @@
+# ─── Runtime config ───
+# Operational settings the bot needs at startup. FAQ content lives in `items`
+# below (grouped by `dx`; items with dx "shared" apply to every diagnosis).
+default_diagnosis: d1
+
+user_diagnosis:
+  U11111111111111111111111111111111: d1
+  U22222222222222222222222222222222: d2
+
+diagnoses:
+  d1:
+    name: NILM + hrHPV Other High Risk Positive
+    rich_menu_id: ""   # paste richmenu-xxx from LINE Console after creating DX1 rich menu
+  d2:
+    name: LSIL จาก Cytology
+    rich_menu_id: ""   # paste richmenu-xxx for DX2
+  d3:
+    name: LSIL จาก Biopsy (CIN1)
+    rich_menu_id: ""   # paste richmenu-xxx for DX3
+  d4:
+    name: ASCUS + HPV Negative
+    rich_menu_id: ""   # paste richmenu-xxx for DX4
+  d5:
+    name: Low-grade + Colposcopy ปกติ
+    rich_menu_id: ""   # paste richmenu-xxx for DX5
+
+escalation:
+  keywords:
+    - เลือดออก
+    - ปวดมาก
+    - ไข้สูง
+    - ตกขาวผิดปกติ
+    - กลัวมาก
+  reply: |
+    เราเป็นห่วงอาการของคุณค่ะ
+    กรุณาไปโรงพยาบาลใกล้บ้านหรือห้องฉุกเฉินทันที
+    และสามารถพิมพ์คำว่า "เจ้าหน้าที่" เพื่อให้ทีมช่วยประสานงานได้ค่ะ
+
+fallback_reply: |
+  ขออภัยค่ะ ตอนนี้บอตยังไม่เข้าใจคำถามนี้
+  คุณสามารถลองพิมพ์คำถามใหม่ หรือพิมพ์ "คุยกับเจ้าหน้าที่" ได้เลยค่ะ
+
 items:
     - code: D1-Q1
       dx: d1

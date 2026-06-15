@@ -376,7 +376,7 @@ docker compose up
 ## Next Steps
 
 1. **Ready for production?** Follow [deployment-beginner-guide.md](./deployment-beginner-guide.md)
-2. **Want to modify bot replies?** Edit `configs/bot.yaml`
+2. **Want to modify bot replies?** Edit `configs/faq_seed.yaml`
 3. **Need to debug?** Check [Debugging Tips](#debugging-tips) above
 
 ---

@@ -25,7 +25,7 @@ USER appuser
 EXPOSE 8080
 
 ENV PORT=8080
-ENV BOT_CONFIG_PATH=/app/configs/bot.yaml
+ENV BOT_CONFIG_PATH=/app/configs/faq_seed.yaml
 
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD wget -qO- http://127.0.0.1:8080/healthz || exit 1
 
