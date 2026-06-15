@@ -4,8 +4,8 @@ import (
 	"strings"
 	"sync"
 
-	"obgynrama-chatbot/internal/domain/entity"
-	"obgynrama-chatbot/internal/domain/repository"
+	"github.com/yimsoijoi/rama-chatbot/internal/domain/entity"
+	"github.com/yimsoijoi/rama-chatbot/internal/domain/repository"
 )
 
 type ReplyUsecase struct {

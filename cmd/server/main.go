@@ -7,12 +7,12 @@ import (
 	"os"
 	"time"
 
-	"obgynrama-chatbot/internal/domain/repository"
-	"obgynrama-chatbot/internal/infrastructure/config"
-	"obgynrama-chatbot/internal/infrastructure/sqlite"
-	httpHandler "obgynrama-chatbot/internal/interface/http"
-	"obgynrama-chatbot/internal/observability"
-	"obgynrama-chatbot/internal/usecase"
+	"github.com/yimsoijoi/rama-chatbot/internal/domain/repository"
+	"github.com/yimsoijoi/rama-chatbot/internal/infrastructure/config"
+	"github.com/yimsoijoi/rama-chatbot/internal/infrastructure/sqlite"
+	httpHandler "github.com/yimsoijoi/rama-chatbot/internal/interface/http"
+	"github.com/yimsoijoi/rama-chatbot/internal/observability"
+	"github.com/yimsoijoi/rama-chatbot/internal/usecase"
 
 	"github.com/line/line-bot-sdk-go/v8/linebot"
 	"github.com/prometheus/client_golang/prometheus"

@@ -1,5 +1,4 @@
 package main
-package main
 
 import (
 	"database/sql"
@@ -7,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	_ "modernc.org/sqlite"
 	"gopkg.in/yaml.v3"
+	_ "modernc.org/sqlite"
 )
 
 type faqSeed struct {

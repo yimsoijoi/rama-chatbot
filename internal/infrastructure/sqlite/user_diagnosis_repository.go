@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"obgynrama-chatbot/internal/domain/entity"
+	"github.com/yimsoijoi/rama-chatbot/internal/domain/entity"
 
 	_ "modernc.org/sqlite"
 )

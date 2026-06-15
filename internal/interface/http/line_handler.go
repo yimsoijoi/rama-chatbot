@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"obgynrama-chatbot/internal/observability"
-	"obgynrama-chatbot/internal/usecase"
+	"github.com/yimsoijoi/rama-chatbot/internal/observability"
+	"github.com/yimsoijoi/rama-chatbot/internal/usecase"
 
 	"github.com/line/line-bot-sdk-go/v8/linebot"
 )

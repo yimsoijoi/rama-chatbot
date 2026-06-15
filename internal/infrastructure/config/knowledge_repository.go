@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"obgynrama-chatbot/internal/domain/entity"
+	"github.com/yimsoijoi/rama-chatbot/internal/domain/entity"
 )
 
 type KnowledgeRepo struct {

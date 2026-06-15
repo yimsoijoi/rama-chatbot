@@ -1,11 +1,12 @@
-module obgynrama-chatbot
+module github.com/yimsoijoi/rama-chatbot
 
-go 1.25.0
+go 1.26.3
 
 require (
 	github.com/line/line-bot-sdk-go/v8 v8.20.0
 	github.com/prometheus/client_golang v1.23.2
 	gopkg.in/yaml.v3 v3.0.1
+	modernc.org/sqlite v1.52.0
 )
 
 require (
@@ -27,5 +28,4 @@ require (
 	modernc.org/libc v1.72.3 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
-	modernc.org/sqlite v1.52.0 // indirect
 )

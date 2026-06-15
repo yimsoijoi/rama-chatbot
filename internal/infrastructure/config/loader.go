@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"obgynrama-chatbot/internal/domain/entity"
-	"obgynrama-chatbot/internal/observability"
+	"github.com/yimsoijoi/rama-chatbot/internal/domain/entity"
+	"github.com/yimsoijoi/rama-chatbot/internal/observability"
 
 	"gopkg.in/yaml.v3"
 )

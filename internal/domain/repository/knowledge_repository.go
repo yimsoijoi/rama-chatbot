@@ -1,6 +1,6 @@
 package repository
 
-import "obgynrama-chatbot/internal/domain/entity"
+import "github.com/yimsoijoi/rama-chatbot/internal/domain/entity"
 
 type KnowledgeRepository interface {
 	ResolveDiagnosis(userID string) string
