@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chatbot Response Scripts — Colposcopy Unit</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Noto+Sans+Thai:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0D2B55; --teal:#0A7E8C; --mint:#E0F7F5; --white:#fff;
+  --bg:#F4F8FB; --gray1:#E8EFF4; --gray2:#7A9BAD; --text:#0D2B55;
+  --red:#DC2626; --green:#059669; --amber:#D97706; --purple:#7C3AED;
+  --blue:#2563EB; --shadow:0 2px 12px rgba(13,43,85,0.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans Thai','Sarabun',sans-serif;background:var(--bg);color:var(--text);}
+
+/* header */
+.header{background:var(--navy);padding:22px 40px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+.header-icon{width:40px;height:40px;background:var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.header h1{font-size:17px;font-weight:700;color:#fff;}
+.header p{font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.header-count{margin-left:auto;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);font-size:11px;padding:5px 14px;border-radius:20px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
+
+/* search */
+.search-bar{padding:20px 40px 0;max-width:1200px;margin:0 auto;}
+.search-input{width:100%;padding:12px 18px;border-radius:10px;border:2px solid var(--gray1);font-size:14px;font-family:'Noto Sans Thai',sans-serif;color:var(--text);background:#fff;box-shadow:var(--shadow);outline:none;transition:border 0.2s;}
+.search-input:focus{border-color:var(--teal);}
+
+/* tab bar */
+.tabs{display:flex;gap:0;padding:16px 40px 0;max-width:1200px;margin:0 auto;overflow-x:auto;}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--gray2);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all 0.2s;user-select:none;font-family:'Noto Sans Thai',sans-serif;}
+.tab:hover{color:var(--teal);}
+.tab.active{color:var(--navy);border-bottom-color:var(--teal);}
+
+/* main */
+.main{max-width:1200px;margin:0 auto;padding:24px 40px 80px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* section header */
+.section-header{margin-bottom:28px;}
+.section-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:6px;}
+.section-title{font-size:22px;font-weight:700;color:var(--navy);}
+.section-sub{font-size:13px;color:var(--gray2);margin-top:4px;}
+.concern-box{margin-top:12px;background:var(--mint);border-left:4px solid var(--teal);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--navy);}
+.concern-box strong{color:var(--teal);}
+
+/* QA card */
+.qa-grid{display:flex;flex-direction:column;gap:16px;}
+.qa-card{background:#fff;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+.qa-card-header{padding:14px 20px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;user-select:none;}
+.qa-card-header:hover{background:var(--bg);}
+.qa-code{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);background:var(--mint);padding:3px 9px;border-radius:6px;white-space:nowrap;margin-top:1px;flex-shrink:0;}
+.qa-code.safety{color:var(--red);background:#FEF2F2;}
+.qa-code.emotion{color:var(--purple);background:#F5F3FF;}
+.qa-code.shared{color:var(--amber);background:#FFFBEB;}
+.qa-question{font-size:14px;font-weight:700;color:var(--navy);flex:1;line-height:1.4;}
+.qa-toggle{color:var(--gray2);font-size:18px;flex-shrink:0;transition:transform 0.2s;margin-top:1px;}
+.qa-card.open .qa-toggle{transform:rotate(180deg);}
+
+.qa-body{display:none;padding:0 20px 20px 20px;}
+.qa-card.open .qa-body{display:block;}
+
+.qa-divider{height:1px;background:var(--gray1);margin-bottom:16px;}
+
+/* bubble preview */
+.bubble-preview{margin-bottom:16px;}
+.bubble-label{font-size:10px;font-weight:700;color:var(--gray2);font-family:'IBM Plex Mono',monospace;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+.bubble-user{display:flex;justify-content:flex-end;margin-bottom:8px;}
+.bubble-user-inner{background:#06C755;color:#fff;border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:13px;max-width:75%;line-height:1.5;}
+.bubble-bot-row{display:flex;gap:8px;align-items:flex-start;}
+.bubble-bot-avatar{width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px;}
+.bubble-bot-inner{background:#fff;border:1px solid var(--gray1);border-radius:4px 16px 16px 16px;padding:10px 14px;font-size:13px;max-width:80%;line-height:1.6;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.quick-reply-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;margin-left:36px;}
+.qr-pill{background:#fff;border:1.5px solid #06C755;color:#06C755;border-radius:16px;padding:5px 12px;font-size:11.5px;font-weight:600;}
+
+/* meta grid */
+.meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+.meta-item{background:var(--bg);border-radius:8px;padding:10px 14px;}
+.meta-key{font-size:10px;font-weight:700;color:var(--gray2);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.meta-val{font-size:12.5px;color:var(--navy);line-height:1.4;}
+
+/* escalate note */
+.escalate-note{background:#FEF2F2;border-left:4px solid var(--red);border-radius:8px;padding:10px 14px;font-size:12px;color:#991B1B;margin-top:12px;line-height:1.5;}
+.emotion-note{background:#F5F3FF;border-left:4px solid var(--purple);border-radius:8px;padding:10px 14px;font-size:12px;color:#4C1D95;margin-top:12px;line-height:1.5;}
+
+/* search result highlight */
+.highlight{background:#FFF9C4;border-radius:3px;}
+
+/* no-result */
+.no-result{text-align:center;padding:60px 20px;color:var(--gray2);font-size:15px;}
+
+@media(max-width:768px){
+  .header{padding:16px 16px;}
+  .search-bar,.main,.tabs{padding-left:16px;padding-right:16px;}
+  .meta-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">💬</div>
+  <div>
+    <h1>Chatbot Response Scripts — Colposcopy Unit</h1>
+    <p>คำตอบของ Bot ทุกคำถาม · 5 Diagnoses · 53 คำถาม</p>
+  </div>
+  <div class="header-count" id="total-count">53 คำถาม</div>
+</div>
+
+<div class="search-bar">
+  <input class="search-input" type="text" placeholder="🔍  ค้นหาคำถาม รหัส หรือคำสำคัญ เช่น LSIL, HPV, มะเร็ง, กังวล..." oninput="doSearch(this.value)" id="search-input">
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showSection('all')">ทั้งหมด</div>
+  <div class="tab" onclick="showSection('d1')">Dx 1 · NILM+hrHPV</div>
+  <div class="tab" onclick="showSection('d2')">Dx 2 · LSIL cytology</div>
+  <div class="tab" onclick="showSection('d3')">Dx 3 · CIN1</div>
+  <div class="tab" onclick="showSection('d4')">Dx 4 · ASCUS HPV–</div>
+  <div class="tab" onclick="showSection('d5')">Dx 5 · Low-grade+Colpo N</div>
+  <div class="tab" onclick="showSection('shared')">⚡ Shared FAQ</div>
+</div>
+
+<div class="main">
+
+<!-- ═══ SEARCH RESULTS ═══ -->
+<div id="search-results" style="display:none;">
+  <div class="section-header"><div class="section-title" id="search-title">ผลการค้นหา</div></div>
+  <div class="qa-grid" id="search-grid"></div>
+  <div class="no-result" id="no-result" style="display:none;">ไม่พบคำถามที่ตรงกัน</div>
+</div>
+
+<!-- ═══ ALL ═══ -->
+<div id="sec-all" class="section active">
+
+<!-- DX1 header -->
+<div class="section-header" style="margin-top:8px;">
+  <div class="section-tag">DX 1</div>
+  <div class="section-title" style="color:var(--teal);">NILM + hrHPV Other High Risk Positive</div>
+  <div class="section-sub">Pap ปกติ · HPV สายพันธุ์อื่น ไม่ใช่ 16/18</div>
+  <div class="concern-box">ความกังวลหลัก: <strong>"Pap ปกติ แต่ทำไม HPV บวก?"</strong></div>
+</div>
+<div class="qa-grid" id="grid-d1"></div>
+
+<!-- DX2 header -->
+<div class="section-header" style="margin-top:40px;">
+  <div class="section-tag">DX 2</div>
+  <div class="section-title" style="color:var(--blue);">LSIL จาก Cytology</div>
+  <div class="section-sub">Pap ผิดปกติระดับต่ำ · ยังไม่มีชิ้นเนื้อ · รอ Colposcopy</div>
+  <div class="concern-box" style="border-color:var(--blue);background:#EFF6FF;">ความกังวลหลัก: <strong style="color:var(--blue);">"ผิดปกติแต่ยังไม่รู้ชัดเจน รอผลเพิ่มเติม"</strong></div>
+</div>
+<div class="qa-grid" id="grid-d2"></div>
+
+<!-- DX3 header -->
+<div class="section-header" style="margin-top:40px;">
+  <div class="section-tag">DX 3</div>
+  <div class="section-title" style="color:var(--purple);">LSIL จาก Biopsy (CIN1)</div>
+  <div class="section-sub">ตัดชิ้นเนื้อยืนยันแล้ว · อยู่ระหว่างติดตาม</div>
+  <div class="concern-box" style="border-color:var(--purple);background:#F5F3FF;">ความกังวลหลัก: <strong style="color:var(--purple);">"ยืนยันแล้วทำไมยังไม่รักษา? กลัวลามขึ้น"</strong></div>
+</div>
+<div class="qa-grid" id="grid-d3"></div>
+
+<!-- DX4 header -->
+<div class="section-header" style="margin-top:40px;">
+  <div class="section-tag">DX 4</div>
+  <div class="section-title" style="color:var(--green);">ASCUS + HPV Negative</div>
+  <div class="section-sub">เซลล์น่าสงสัยเล็กน้อย · HPV ลบ · ความเสี่ยงต่ำ</div>
+  <div class="concern-box" style="border-color:var(--green);background:#ECFDF5;">ความกังวลหลัก: <strong style="color:var(--green);">"HPV ลบแล้ว แต่ทำไมยังผิดปกติ?"</strong></div>
+</div>
+<div class="qa-grid" id="grid-d4"></div>
+
+<!-- DX5 header -->
+<div class="section-header" style="margin-top:40px;">
+  <div class="section-tag">DX 5</div>
+  <div class="section-title" style="color:var(--amber);">Low-grade Cytology + Colposcopy ปกติ</div>
+  <div class="section-sub">Pap ผิดปกติ · Colposcopy ไม่พบรอยโรค · ไม่ตัดชิ้นเนื้อ</div>
+  <div class="concern-box" style="border-color:var(--amber);background:#FFFBEB;">ความกังวลหลัก: <strong style="color:var(--amber);">"แพทย์ไม่ตัดชิ้นเนื้อ มั่นใจได้ยังไง?"</strong></div>
+</div>
+<div class="qa-grid" id="grid-d5"></div>
+
+<!-- Shared header -->
+<div class="section-header" style="margin-top:40px;">
+  <div class="section-tag">SHARED</div>
+  <div class="section-title">⚡ Shared FAQ — ทุก Diagnosis</div>
+  <div class="section-sub">คำถามที่ปรากฏใน Rich Menu หลักทุก Diagnosis</div>
+</div>
+<div class="qa-grid" id="grid-shared"></div>
+
+</div><!-- /all -->
+
+<!-- Individual sections -->
+<div id="sec-d1" class="section">
+  <div class="section-header"><div class="section-tag">DX 1</div><div class="section-title" style="color:var(--teal);">NILM + hrHPV Other High Risk Positive</div><div class="section-sub">Pap ปกติ · HPV สายพันธุ์อื่น ไม่ใช่ 16/18</div><div class="concern-box">ความกังวลหลัก: <strong>"Pap ปกติ แต่ทำไม HPV บวก?"</strong></div></div>
+  <div class="qa-grid" id="grid-d1b"></div>
+</div>
+<div id="sec-d2" class="section">
+  <div class="section-header"><div class="section-tag">DX 2</div><div class="section-title" style="color:var(--blue);">LSIL จาก Cytology</div><div class="section-sub">Pap ผิดปกติ · ยังไม่มีชิ้นเนื้อ · รอ Colposcopy</div></div>
+  <div class="qa-grid" id="grid-d2b"></div>
+</div>
+<div id="sec-d3" class="section">
+  <div class="section-header"><div class="section-tag">DX 3</div><div class="section-title" style="color:var(--purple);">LSIL จาก Biopsy (CIN1)</div><div class="section-sub">ตัดชิ้นเนื้อยืนยันแล้ว · อยู่ระหว่างติดตาม</div></div>
+  <div class="qa-grid" id="grid-d3b"></div>
+</div>
+<div id="sec-d4" class="section">
+  <div class="section-header"><div class="section-tag">DX 4</div><div class="section-title" style="color:var(--green);">ASCUS + HPV Negative</div><div class="section-sub">เซลล์น่าสงสัย · HPV ลบ · ความเสี่ยงต่ำ</div></div>
+  <div class="qa-grid" id="grid-d4b"></div>
+</div>
+<div id="sec-d5" class="section">
+  <div class="section-header"><div class="section-tag">DX 5</div><div class="section-title" style="color:var(--amber);">Low-grade + Colposcopy ปกติ</div><div class="section-sub">Pap ผิดปกติ · Colposcopy ไม่พบรอยโรค · ไม่ตัดชิ้นเนื้อ</div></div>
+  <div class="qa-grid" id="grid-d5b"></div>
+</div>
+<div id="sec-shared" class="section">
+  <div class="section-header"><div class="section-tag">SHARED</div><div class="section-title">⚡ Shared FAQ — ทุก Diagnosis</div></div>
+  <div class="qa-grid" id="grid-sharedb"></div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ════════════════════════════════════════════════
+// DATA: ALL Q&A
+// ════════════════════════════════════════════════
+const data = [
+  // ─── DX1 ───
+  { code:"D1-Q1", dx:"d1", type:"normal", color:"teal",
+    q:"ผล Pap ปกติ แต่ทำไมแพทย์บอกว่ามี HPV?",
+    bot:`เข้าใจเลยค่ะ ฟังดูน่าสับสนมากเลย 💙<br><br>Pap smear และ HPV เป็นการตรวจคนละอย่างกันนะคะ<br><br>🔬 <b>Pap smear</b> ตรวจดูว่า<u>เซลล์ปากมดลูกเปลี่ยนแปลงไปไหม</u> — ผลของคุณ "ปกติ" แปลว่าตอนนี้เซลล์ยังดีอยู่ค่ะ ✅<br><br>🦠 <b>HPV test</b> ตรวจดูว่า<u>มีไวรัส HPV อยู่ในร่างกายไหม</u> — ผลของคุณพบ HPV สายพันธุ์ความเสี่ยงสูงค่ะ<br><br>ดังนั้น Pap ปกติ + HPV บวก แปลว่า "ตอนนี้ยังไม่มีรอยโรค แต่มีไวรัสอยู่" ค่ะ ซึ่งพบได้บ่อยในผู้หญิงวัยเจริญพันธุ์นะคะ`,
+    replies:["HPV หายเองได้ไหม?","ทำไมไม่รักษา?","ต้องมาตรวจซ้ำเมื่อไหร่?"],
+    category:"ความเข้าใจผล", next_action:"ติดตาม 12 เดือน"
+  },
+  { code:"D1-Q2", dx:"d1", type:"normal", color:"teal",
+    q:"HPV other high risk คืออะไร ต่างจาก HPV 16/18 อย่างไร?",
+    bot:`HPV มีมากกว่า 200 สายพันธุ์ค่ะ แบ่งเป็น<br><br>🔴 <b>สายพันธุ์ความเสี่ยงสูงมาก</b> (HPV 16, 18) — เสี่ยงต่อมะเร็งมากที่สุด<br><br>🟡 <b>สายพันธุ์ความเสี่ยงสูงอื่นๆ</b> (เช่น 31, 33, 45, 52, 58) — นี่คือกลุ่มของคุณค่ะ เสี่ยงน้อยกว่า 16/18 แต่ยังต้องติดตามอยู่<br><br>🟢 <b>สายพันธุ์ความเสี่ยงต่ำ</b> (HPV 6, 11) — ไม่ก่อมะเร็ง<br><br>การที่ผลของคุณเป็น "other high risk" แปลว่าอยู่ในกลุ่มที่ต้องระวัง แต่ไม่ใช่กลุ่มที่เสี่ยงสูงที่สุดค่ะ`,
+    replies:["HPV หายเองได้ไหม?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"ความรู้", next_action:"ให้ข้อมูลเพิ่มเติม"
+  },
+  { code:"D1-Q3", dx:"d1", type:"normal", color:"teal",
+    q:"ถ้า Pap ปกติ แล้ว HPV จะหายเองได้ไหม?",
+    bot:`ข่าวดีค่ะ! 🌟<br><br>ร่างกายเรามีภูมิคุ้มกันที่สามารถกำจัด HPV เองได้นะคะ<br><br>📊 จากงานวิจัย:<br>• <b>~80-90%</b> ของผู้ที่ติด HPV จะกำจัดไวรัสได้เองภายใน <b>1-2 ปี</b><br>• สำหรับ HPV other high risk โอกาสหายเองก็ยังค่อนข้างสูงค่ะ<br><br>🛡️ ร่างกายจะสู้ได้ดีขึ้นถ้า:<br>• นอนหลับพักผ่อนเพียงพอ<br>• ไม่สูบบุหรี่ (บุหรี่ลดภูมิคุ้มกัน)<br>• ดูแลสุขภาพโดยรวม<br><br>แต่ต้องติดตามด้วยการตรวจซ้ำตามนัดนะคะ เพื่อให้แน่ใจว่าทุกอย่างเป็นปกติค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","ระหว่างรอต้องระวังอะไร?"],
+    category:"การพยากรณ์โรค", next_action:"ติดตาม"
+  },
+  { code:"D1-Q4", dx:"d1", type:"normal", color:"teal",
+    q:"ทำไมแพทย์ไม่รักษา ทั้งๆ ที่ HPV บวก?",
+    bot:`เหตุผลดีมากที่ถามนะคะ 💙<br><br>ณ ตอนนี้ยังไม่มียาที่กำจัด HPV ไวรัสได้โดยตรงค่ะ สิ่งที่ "รักษา" ได้จริงๆ คือ<u>รอยโรคที่เซลล์ผิดปกติ</u> ไม่ใช่ตัวไวรัส<br><br>เนื่องจากผล Pap ของคุณยังปกติ แสดงว่าตอนนี้เซลล์ยังไม่เปลี่ยนแปลง จึงยังไม่มีรอยโรคที่จะรักษาค่ะ<br><br>✅ แผนที่ดีที่สุดตอนนี้คือ:<br>1. ให้ร่างกายสู้กับ HPV เอง<br>2. ตรวจติดตามตามนัด เพื่อดูว่าเซลล์เปลี่ยนแปลงไหม<br>3. ถ้าเกิดรอยโรค แพทย์จะรักษาทันทีค่ะ`,
+    replies:["HPV หายเองได้ไหม?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"เหตุผลการรักษา", next_action:"ให้ข้อมูล"
+  },
+  { code:"D1-Q5", dx:"d1", type:"normal", color:"teal",
+    q:"ต้องมาตรวจซ้ำเมื่อไหร่ และตรวจอะไรบ้าง?",
+    bot:`📅 แผนการตรวจติดตามของคุณค่ะ<br><br>สำหรับ NILM + HPV other high risk แนวทางทั่วไปคือ:<br><br>🔹 <b>12 เดือน</b> หลังการตรวจครั้งนี้ → <b>Co-testing</b> (Pap + HPV ใหม่)<br><br>📌 ผลที่เป็นไปได้:<br>• HPV หาย + Pap ปกติ → กลับสู่การตรวจตามปกติ 3 ปีค่ะ 🎉<br>• HPV ยังบวกอยู่ → อาจส่งต่อเพื่อทำ Colposcopy เพิ่มเติม<br><br>⚠️ กรุณามาตามนัดทุกครั้งนะคะ การติดตามสม่ำเสมอคือสิ่งสำคัญที่สุดค่ะ`,
+    replies:["ระหว่างรอต้องระวังอะไร?","ยังมีเพศสัมพันธ์ได้ไหม?"],
+    category:"การติดตาม", next_action:"นัด 12 เดือน"
+  },
+  { code:"D1-Q6", dx:"d1", type:"normal", color:"teal",
+    q:"ระหว่างรอตรวจซ้ำ ต้องระวังอะไรบ้าง?",
+    bot:`ขอบคุณที่ใส่ใจดูแลตัวเองค่ะ 🌿<br><br>สิ่งที่ช่วยให้ร่างกายสู้กับ HPV ได้ดีขึ้น:<br><br>✅ <b>ทำได้เลย</b><br>• นอนหลับ 7-8 ชั่วโมง<br>• กินผักผลไม้ให้เพียงพอ<br>• ออกกำลังกายสม่ำเสมอ<br>• จัดการความเครียด<br><br>❌ <b>ควรหลีกเลี่ยง</b><br>• สูบบุหรี่ (ลดภูมิคุ้มกันปากมดลูกโดยตรง)<br>• ดื่มแอลกอฮอล์มากเกินไป<br><br>🚨 <b>ถ้ามีอาการเหล่านี้ รีบพบแพทย์ทันที</b><br>• เลือดออกผิดปกติทางช่องคลอด<br>• ตกขาวมีกลิ่น/สีผิดปกติ<br>• ปวดอุ้งเชิงกรานผิดปกติ`,
+    replies:["ยังมีเพศสัมพันธ์ได้ไหม?","บอกแฟนได้ไหม?"],
+    category:"การดูแลตัวเอง", next_action:"ให้ข้อมูล"
+  },
+  { code:"D1-Q7", dx:"d1", type:"normal", color:"teal",
+    q:"ควรบอกแฟนได้ไหม? จะติดต่อให้แฟนได้อย่างไร?",
+    bot:`เป็นคำถามที่ดีมากค่ะ และแสดงถึงความรับผิดชอบ 💙<br><br>🗣️ <b>การบอกคู่รัก</b><br>แนะนำให้แจ้งนะคะ เพราะ HPV ติดต่อทางเพศสัมพันธ์ คู่รักควรรู้เพื่อ:<br>• พิจารณาตรวจ HPV (ถ้าเป็นผู้หญิง)<br>• พิจารณาฉีดวัคซีน<br>• ใช้ถุงยางอนามัยเพื่อลดความเสี่ยง<br><br>💬 <b>วิธีบอก</b><br>อาจพูดว่า "ฉันตรวจพบ HPV ซึ่งพบได้บ่อยมาก เราควรคุยกับแพทย์ด้วยกัน"<br><br>⚠️ <b>สิ่งสำคัญ</b><br>HPV พบได้ในผู้ใหญ่ส่วนใหญ่ที่เคยมีเพศสัมพันธ์แล้วค่ะ ไม่ได้แปลว่าใครไม่ซื่อสัตย์`,
+    replies:["ยังมีเพศสัมพันธ์ได้ไหม?","ลูกสาวควรฉีดวัคซีนไหม?"],
+    category:"การส่งต่อเชื้อ", next_action:"ให้ข้อมูล"
+  },
+  { code:"D1-Q8", dx:"d1", type:"normal", color:"teal",
+    q:"ยังมีเพศสัมพันธ์ได้ไหมขณะที่ HPV บวก?",
+    bot:`มีเพศสัมพันธ์ได้ค่ะ ไม่ได้ห้ามค่ะ 💙<br><br>แต่มีข้อแนะนำดังนี้:<br><br>🛡️ <b>ใช้ถุงยางอนามัย</b> — ลดความเสี่ยงการถ่ายทอดให้คู่รัก (แต่ไม่ได้ป้องกัน 100% เพราะ HPV ติดต่อทางผิวหนัง)<br><br>📋 <b>แจ้งคู่รักให้ทราบ</b> — เพื่อให้เขา/เธอสามารถตรวจหรือฉีดวัคซีนได้<br><br>🚭 <b>งดสูบบุหรี่</b> — ช่วยให้ภูมิคุ้มกันปากมดลูกแข็งแกร่งขึ้น<br><br>ไม่ต้องโดดเดี่ยวตัวเองนะคะ HPV พบได้ในผู้ใหญ่ส่วนใหญ่ค่ะ`,
+    replies:["บอกแฟนได้ไหม?","ลูกสาวควรฉีดวัคซีนไหม?"],
+    category:"คุณภาพชีวิต", next_action:"ให้ข้อมูล"
+  },
+  { code:"D1-Q9", dx:"d1", type:"normal", color:"teal",
+    q:"ถ้าลูกสาวยังไม่ได้ฉีดวัคซีน ควรฉีดไหม?",
+    bot:`แนะนำให้ฉีดเลยค่ะ! 💉<br><br>✅ <b>วัคซีน HPV ได้ผลดีที่สุดเมื่อ</b><br>• ฉีดก่อนเริ่มมีเพศสัมพันธ์ (อายุ 9-14 ปี)<br>• แต่ยังฉีดได้ถึงอายุ 26 ปี และบางกรณีถึง 45 ปีค่ะ<br><br>🛡️ <b>วัคซีนป้องกัน</b><br>• HPV 16, 18 → ป้องกันมะเร็งปากมดลูก 70%<br>• HPV 6, 11, 16, 18, 31, 33, 45, 52, 58 (วัคซีน 9 สายพันธุ์)<br><br>💊 <b>ตาราง</b><br>• อายุ <15 ปี: 2 เข็ม ห่างกัน 6 เดือน<br>• อายุ ≥15 ปี: 3 เข็ม (0, 1-2, 6 เดือน)<br><br>ติดต่อโรงพยาบาลหรือคลินิกใกล้บ้านได้เลยค่ะ`,
+    replies:["มีคำถามอื่นอีกไหม?"],
+    category:"การป้องกัน", next_action:"ให้ข้อมูล"
+  },
+  { code:"D1-Q10", dx:"d1", type:"emotion", color:"teal",
+    q:"ฉันรู้สึกกังวลมากแม้ผล Pap ปกติ ปกติไหม?",
+    bot:`รู้สึกแบบนั้นได้เลยนะคะ เป็นเรื่องปกติมากค่ะ 💙<br><br>การได้ยินว่า "HPV บวก" ทำให้กังวลได้มากเลย แม้ว่า Pap จะปกติก็ตาม<br><br>🌟 <b>สิ่งที่ควรรู้</b><br>• HPV พบในผู้ใหญ่ส่วนใหญ่ที่มีเพศสัมพันธ์แล้ว<br>• Pap ปกติ + ติดตามตามนัด = คุณทำสิ่งที่ดีที่สุดแล้วค่ะ<br>• ความกังวลไม่ได้ช่วยให้ร่างกายสู้ HPV ได้ดีขึ้น แต่การพักผ่อนเพียงพอช่วยได้ค่ะ<br><br>💜 ถ้ายังรู้สึกกังวลมาก ลองพูดคุยกับพยาบาลประจำหน่วยได้นะคะ เราพร้อมรับฟังค่ะ`,
+    replies:["คุยกับเจ้าหน้าที่","มีคำถามอื่นอีกไหม?"],
+    category:"สนับสนุนจิตใจ", next_action:"เสนอ staff handoff",
+    emotion_note:"ใช้ 4-step emotion framework: รับรู้ → ให้ข้อมูล → เสริมพลัง → เสนอช่องทาง"
+  },
+
+  // ─── DX2 ───
+  { code:"D2-Q1", dx:"d2", type:"normal", color:"blue",
+    q:"LSIL คืออะไร หมายความว่าฉันกำลังจะเป็นมะเร็งไหม?",
+    bot:`เข้าใจว่าได้ยินคำนี้แล้วกังวลมากเลยนะคะ 💙 ขออธิบายให้ชัดเจนค่ะ<br><br>🔬 <b>LSIL ย่อมาจาก Low-grade Squamous Intraepithelial Lesion</b><br>แปลว่า "เซลล์ผิดปกติระดับต่ำ" ค่ะ<br><br>⚠️ <b>ยังไม่ใช่มะเร็ง</b> LSIL อยู่ห่างจากมะเร็งมากค่ะ เป็นเหมือนสัญญาณเตือนระดับแรกสุด<br><br>📊 <b>สถิติที่ควรรู้</b><br>• <b>60-70%</b> ของ LSIL <u>หายเองได้</u>ภายใน 1-2 ปี<br>• ~20% คงที่ ไม่เปลี่ยนแปลง<br>• ~10% อาจลุกลามเป็น CIN2+ (ต้องรักษา)<br>• โอกาสกลายเป็นมะเร็งโดยตรงน้อยมาก<br><br>✅ การที่แพทย์ตรวจพบในระยะนี้ถือว่าดีมากค่ะ`,
+    replies:["ทำไมไม่รักษาทันที?","หายเองได้มากแค่ไหน?","Colposcopy คืออะไร?"],
+    category:"ความเข้าใจผล", next_action:"ให้ข้อมูล"
+  },
+  { code:"D2-Q2", dx:"d2", type:"normal", color:"blue",
+    q:"ทำไมแพทย์ไม่รักษาเลย ต้องรอดูอะไรอยู่?",
+    bot:`เหตุผลที่รอดูเพราะแพทย์คำนึงถึงประโยชน์และความเสี่ยงค่ะ 💙<br><br>🎯 <b>เหตุผลหลัก</b><br>• LSIL ส่วนใหญ่ (60-70%) <b>หายเองได้</b> ในเวลาสั้นๆ<br>• การรักษา เช่น จี้ไฟฟ้า หรือ LEEP อาจทำให้ปากมดลูกอ่อนแอลง มีผลต่อการตั้งครรภ์<br>• การรักษาเกินความจำเป็นมีผลข้างเคียงที่ไม่คุ้ม<br><br>⚖️ <b>หลักการ</b><br>"รักษาเมื่อจำเป็น ไม่รักษาเกินความจำเป็น"<br><br>✅ แผนปัจจุบัน: ติดตามด้วย Colposcopy เพื่อดูให้ชัดขึ้น แพทย์จะรักษาทันทีถ้าจำเป็นค่ะ`,
+    replies:["หายเองได้มากแค่ไหน?","Colposcopy คืออะไร?"],
+    category:"เหตุผลการรักษา", next_action:"ให้ข้อมูล"
+  },
+  { code:"D2-Q3", dx:"d2", type:"normal", color:"blue",
+    q:"LSIL มีโอกาสหายเองได้มากแค่ไหน?",
+    bot:`ข่าวดีมากค่ะ! 🌟<br><br>📊 <b>จากงานวิจัย</b><br>• <b>60-70%</b> หายเองภายใน <b>1 ปี</b><br>• <b>70-80%</b> หายเองภายใน <b>2 ปี</b><br><br>🛡️ <b>ปัจจัยที่ช่วยให้หายเร็ว</b><br>• ภูมิคุ้มกันแข็งแรง<br>• ไม่สูบบุหรี่<br>• อายุน้อย (ภูมิฟื้นตัวไว)<br>• HPV หาย<br><br>💊 <b>สิ่งที่ทำได้ตอนนี้</b><br>• มาตรวจติดตามตามนัด<br>• ดูแลสุขภาพโดยรวม<br>• งดสูบบุหรี่<br><br>แพทย์จะตรวจดูสม่ำเสมอค่ะ ไม่ได้ปล่อยทิ้งไว้แน่นอน`,
+    replies:["ถ้าไม่หาย จะกลายเป็นมะเร็งกี่ปี?","Colposcopy คืออะไร?"],
+    category:"การพยากรณ์โรค", next_action:"ให้ข้อมูล"
+  },
+  { code:"D2-Q4", dx:"d2", type:"normal", color:"blue",
+    q:"ถ้าไม่หาย จะกลายเป็นมะเร็งได้ภายในกี่ปี?",
+    bot:`เป็นคำถามที่ดีมากค่ะ ขอให้ข้อมูลจริงๆ นะคะ 💙<br><br>📈 <b>เส้นทางของ LSIL (กรณีที่ไม่หาย)</b><br>LSIL → CIN2 → CIN3 → มะเร็งระยะแรก<br><br>⏰ <b>เวลาที่ใช้</b><br>• กระบวนการนี้ใช้เวลา <b>10-15 ปี</b> โดยเฉลี่ยค่ะ<br>• ไม่ใช่เรื่องข้ามคืน<br><br>🛡️ <b>ทำไมจึงปลอดภัย</b><br>• แพทย์ตรวจติดตามทุก 6-12 เดือน<br>• ถ้าเกิด CIN2+ แพทย์จะรักษาทันที ก่อนกลายเป็นมะเร็ง<br>• การติดตามตามนัดทำให้ตรวจพบและรักษาได้เร็วมากค่ะ<br><br>✅ สรุป: ไม่ต้องกังวลว่าจะกลายเป็นมะเร็งชั่วข้ามคืน แค่มาตามนัดก็ปลอดภัยค่ะ`,
+    replies:["Colposcopy คืออะไร?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"การพยากรณ์โรค", next_action:"ให้ข้อมูล"
+  },
+  { code:"D2-Q5", dx:"d2", type:"normal", color:"blue",
+    q:"การตรวจ Colposcopy คืออะไร เจ็บไหม?",
+    bot:`บอกให้ทราบก่อนนะคะ เพื่อจะได้เตรียมใจได้ถูกต้องค่ะ 💙<br><br>🔭 <b>Colposcopy คืออะไร?</b><br>เป็นการตรวจปากมดลูกด้วยกล้องขยายพิเศษ (Colposcope) เพื่อดูรอยโรคให้ชัดขึ้นค่ะ<br><br>⏱️ <b>ใช้เวลา:</b> ประมาณ 15-30 นาที<br><br>😌 <b>เจ็บไหม?</b><br>• การตรวจส่วนใหญ่ไม่เจ็บค่ะ รู้สึกเหมือนตรวจ Pap ทั่วไป<br>• อาจมีความรู้สึกไม่สบาย (แปลกๆ) แต่ไม่รุนแรง<br>• ถ้ามีการตัดชิ้นเนื้อ อาจเจ็บเล็กน้อย เหมือนถูกหนีบค่ะ<br><br>🩸 <b>หลังตรวจ</b><br>• อาจมีตกขาวสีน้ำตาล/เลือดออกเล็กน้อย 1-2 วัน ปกติค่ะ<br>• พักได้ตามปกติ ไม่ต้องหยุดงาน`,
+    replies:["เตรียมตัวก่อนมาตรวจอย่างไร?","หลังตรวจต้องระวังอะไร?"],
+    category:"ความรู้หัตถการ", next_action:"ให้ข้อมูล"
+  },
+  { code:"D2-Q6", dx:"d2", type:"normal", color:"blue",
+    q:"ต้องเตรียมตัวอย่างไรก่อนมาตรวจ Colposcopy?",
+    bot:`ขอบคุณที่เตรียมตัวล่วงหน้านะคะ 💙 มีข้อแนะนำดังนี้ค่ะ<br><br>✅ <b>ควรทำ</b><br>• แต่งตัวสบาย ใส่เสื้อผ้าที่ถอดง่าย<br>• มาถึงก่อนนัด 15 นาที<br>• แจ้งแพทย์ถ้ากำลังใช้ยาอะไรอยู่<br>• พาผู้ดูแลมาด้วยได้ถ้าต้องการ<br><br>❌ <b>งดก่อนตรวจ 24-48 ชั่วโมง</b><br>• การมีเพศสัมพันธ์<br>• การใส่ยาเข้าช่องคลอด<br>• การสวนล้างช่องคลอด<br>• ใช้ผ้าอนามัยแบบสอด<br><br>📅 <b>ช่วงเวลาที่ดีที่สุด</b><br>• ควรตรวจในช่วงที่ไม่มีประจำเดือน<br>• ถ้ามีประจำเดือนในวันนัด ติดต่อเพื่อเลื่อนนัดได้ค่ะ`,
+    replies:["Colposcopy เจ็บไหม?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"การเตรียมตัว", next_action:"ให้ข้อมูล"
+  },
+  { code:"D2-Q7", dx:"d2", type:"normal", color:"blue",
+    q:"ผล Pap ครั้งนี้มาจากอะไร HPV หรือเปล่า?",
+    bot:`คำถามดีมากค่ะ 💙<br><br>🦠 <b>HPV และ LSIL มีความสัมพันธ์กันสูงมาก</b><br>• LSIL ส่วนใหญ่ (~80-90%) เกิดจาก HPV ค่ะ<br>• ไวรัส HPV ทำให้เซลล์ปากมดลูกเปลี่ยนแปลง<br><br>🔍 <b>แต่มีสาเหตุอื่นด้วยค่ะ เช่น</b><br>• การอักเสบจากเชื้ออื่น<br>• ฮอร์โมนเปลี่ยนแปลง<br>• การระคายเคืองของเซลล์<br><br>📋 ถ้ายังไม่ได้ตรวจ HPV พร้อมกัน แพทย์อาจสั่งตรวจเพิ่มในครั้งต่อไปค่ะ<br><br>✅ ไม่ว่าสาเหตุจะเป็นอะไร การตรวจติดตามด้วย Colposcopy จะช่วยให้เห็นภาพชัดขึ้นค่ะ`,
+    replies:["Colposcopy คืออะไร?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"สาเหตุ", next_action:"ให้ข้อมูล"
+  },
+  { code:"D2-Q8", dx:"d2", type:"normal", color:"blue",
+    q:"ต้องมาตรวจซ้ำเมื่อไหร่ และต้องตรวจอะไรบ้าง?",
+    bot:`📅 <b>แผนการติดตามของคุณค่ะ</b><br><br>ขั้นต่อไปสำหรับ LSIL จาก cytology คือ:<br><br>🔹 <b>Colposcopy</b> — ตามนัดที่แพทย์กำหนด (มักภายใน 2-4 สัปดาห์)<br><br>📌 <b>หลัง Colposcopy ผลจะกำหนดแผนต่อ:</b><br>• Colposcopy ปกติ ไม่ตัดชิ้นเนื้อ → Co-test 1 ปี<br>• ตัดชิ้นเนื้อพบ CIN1 → ติดตาม 6-12 เดือน<br>• ตัดชิ้นเนื้อพบ CIN2+ → แพทย์วางแผนรักษา<br><br>⚠️ กรุณามาตามนัดทุกครั้งนะคะ การไม่มาตามนัดทำให้เราช่วยคุณได้ยากขึ้นค่ะ`,
+    replies:["Colposcopy คืออะไร?","เตรียมตัวก่อนมาตรวจอย่างไร?"],
+    category:"การติดตาม", next_action:"นัดตาม Colposcopy"
+  },
+  { code:"D2-Q9", dx:"d2", type:"safety", color:"blue",
+    q:"ระหว่างรอตรวจ มีสัญญาณอะไรที่ต้องรีบกลับมาพบแพทย์?",
+    bot:`🚨 <b>อาการที่ต้องรีบมาพบแพทย์ทันที ไม่ต้องรอนัด</b><br><br>❗ <b>มาทันที ถ้ามี</b><br>• เลือดออกทางช่องคลอดผิดปกติ (ไม่ใช่ประจำเดือน)<br>• เลือดออกหลังมีเพศสัมพันธ์<br>• ตกขาวมีกลิ่นผิดปกติ สีเหลือง/เขียว/มีเลือดปน<br>• ปวดอุ้งเชิงกรานอย่างรุนแรงหรือต่อเนื่อง<br>• มีไข้สูงร่วมกับปวดท้องน้อย<br><br>📞 <b>ติดต่อหน่วย Colposcopy</b><br>โทรแจ้งก่อนมา เพื่อเตรียมรับคุณได้ทันที<br><br>⚠️ อย่ารอให้วันนัดมาถึงนะคะ ถ้ามีอาการเหล่านี้`,
+    replies:["ติดต่อเจ้าหน้าที่","กลับหน้าหลัก"],
+    category:"Safety", next_action:"Escalate ถ้ากด",
+    safety_note:"Trigger ทันทีถ้าผู้ป่วยพิมพ์ว่ามีอาการเหล่านี้"
+  },
+  { code:"D2-Q10", dx:"d2", type:"normal", color:"blue",
+    q:"ฉันบอกผลตรวจนี้ให้คนในครอบครัวรู้ดีไหม?",
+    bot:`เป็นการตัดสินใจส่วนตัวที่คุณเลือกได้ค่ะ 💙<br><br>🗣️ <b>ข้อดีของการบอกคนใกล้ชิด</b><br>• ได้รับการสนับสนุนทางอารมณ์<br>• มีคนช่วยพาไปตรวจตามนัด<br>• ลดความเครียดจากการแบกรับคนเดียว<br><br>🔒 <b>ถ้ายังไม่พร้อมบอก</b><br>• เป็นสิทธิ์ของคุณค่ะ ไม่มีใครบังคับได้<br>• LSIL ไม่ใช่โรคติดต่อที่คนอื่นในบ้านต้องกังวล<br><br>💡 <b>ถ้าจะบอก อาจพูดว่า</b><br>"ฉันต้องไปตรวจสุขภาพเพิ่มเติมนะ เรื่องปกติที่แพทย์ต้องการติดตามค่ะ"<br><br>💜 ถ้าต้องการคุยกับพยาบาลก่อน เราพร้อมรับฟังค่ะ`,
+    replies:["คุยกับเจ้าหน้าที่","มีคำถามอื่นอีกไหม?"],
+    category:"จิตสังคม", next_action:"ให้ข้อมูล"
+  },
+  { code:"D2-Q11", dx:"d2", type:"emotion", color:"blue",
+    q:"กังวลจนนอนไม่หลับ มีวิธีจัดการความเครียดยังไงดี?",
+    bot:`รับรู้ว่ารู้สึกแบบนั้นนะคะ และเป็นเรื่องที่เข้าใจได้มากค่ะ 💙<br><br>ความกังวลหลังรู้ผลตรวจเป็นเรื่องปกติมาก ไม่ได้แปลว่าคุณอ่อนแอค่ะ<br><br>🌿 <b>วิธีที่ช่วยได้</b><br>• <b>หายใจลึกๆ</b> 4-7-8 (หายใจเข้า 4 วินาที กลั้น 7 หน่วย หายใจออก 8 วินาที)<br>• <b>จำกัดการค้นหาข้อมูลใน Google</b> ข้อมูลออนไลน์มักน่ากลัวกว่าความเป็นจริง<br>• <b>บอกคนที่ไว้ใจ</b> แค่มีคนรับฟังช่วยได้มาก<br>• <b>ทำกิจกรรมที่ชอบ</b> เพื่อเบี่ยงเบนความสนใจ<br><br>💜 <b>ถ้าความกังวลส่งผลมากต่อชีวิตประจำวัน</b><br>บอกพยาบาลหรือแพทย์ได้เลยนะคะ เราสามารถส่งต่อให้นักจิตวิทยาหรือจิตแพทย์ได้ค่ะ`,
+    replies:["คุยกับเจ้าหน้าที่","มีคำถามอื่นอีกไหม?"],
+    category:"สนับสนุนจิตใจ", next_action:"เสนอ staff handoff",
+    emotion_note:"ใช้ 4-step: รับรู้ → ให้เทคนิค → เสริมพลัง → เสนอช่องทาง"
+  },
+
+  // ─── DX3 ───
+  { code:"D3-Q1", dx:"d3", type:"normal", color:"purple",
+    q:"CIN1 คืออะไร ต่างจาก LSIL อย่างไร?",
+    bot:`อธิบายให้ชัดเจนเลยนะคะ 💜<br><br>🔬 <b>ความสัมพันธ์ LSIL vs CIN1</b><br>• <b>LSIL</b> = ผล Pap smear (ตรวจเซลล์ปากมดลูก) พบว่าผิดปกติระดับต่ำ<br>• <b>CIN1</b> = ผล Biopsy (ตัดชิ้นเนื้อ) ยืนยันว่าเซลล์ผิดปกติระดับ 1<br><br>📊 <b>ระบบ CIN</b><br>CIN 1 → CIN 2 → CIN 3 → มะเร็ง (ยังห่างมาก)<br><br>✅ <b>CIN1 = ระดับต่ำที่สุด</b><br>เป็นการเปลี่ยนแปลงของเซลล์ในระดับ 1 ใน 3 ของชั้นผิวเท่านั้น ยังไม่ลึกค่ะ<br><br>ผลของคุณได้รับการยืนยันจากชิ้นเนื้อแล้ว ดังนั้นเราทราบชัดเจนว่าเป็นอะไรค่ะ`,
+    replies:["CIN1 เป็นมะเร็งแล้วหรือยัง?","ทำไมไม่ต้องรักษา?"],
+    category:"ความเข้าใจผล", next_action:"ให้ข้อมูล"
+  },
+  { code:"D3-Q2", dx:"d3", type:"normal", color:"purple",
+    q:"CIN1 เป็นมะเร็งแล้วหรือยัง?",
+    bot:`<b>ยังไม่เป็นมะเร็งค่ะ</b> ขอยืนยันตรงนี้เลย 💜<br><br>🛡️ CIN1 ยังอยู่ในขั้นที่เซลล์เริ่มเปลี่ยนแปลงเล็กน้อยเท่านั้น<br><br>📏 <b>เปรียบเทียบให้เห็นภาพ</b><br>CIN1 ←←←←←←←← ยังอยู่ตรงนี้ →→→→→→→→ มะเร็ง<br>                                                    ระยะทาง ~10 ปี<br><br>🌟 <b>ข้อมูลสำคัญ</b><br>• CIN1 <b>ไม่ใช่</b>มะเร็ง และส่วนใหญ่ไม่กลายเป็นมะเร็ง<br>• 70-80% หายเองภายใน 1-2 ปี<br>• ร่างกายของคุณกำลังสู้กับมันอยู่ค่ะ<br><br>แพทย์ติดตามดูแลคุณอยู่ตลอดค่ะ`,
+    replies:["ทำไมไม่ต้องรักษา?","หายเองกี่เปอร์เซ็นต์?"],
+    category:"ความเข้าใจผล", next_action:"ให้ข้อมูล"
+  },
+  { code:"D3-Q3", dx:"d3", type:"normal", color:"purple",
+    q:"ทำไม CIN1 ถึงไม่ต้องรักษา ปล่อยไว้ไม่อันตรายหรือ?",
+    bot:`เข้าใจว่าอยากให้รักษาเลยดีกว่าค่ะ แต่มีเหตุผลทางการแพทย์ที่ชัดเจนนะคะ 💜<br><br>⚖️ <b>เหตุผลที่ไม่รักษาทันที</b><br><br>1️⃣ <b>CIN1 หายเองสูงมาก</b> (70-80%)<br>→ รักษาคนที่จะหายเองด้วยยา/การผ่าตัด = ไม่คุ้ม<br><br>2️⃣ <b>การรักษามีผลข้างเคียง</b><br>→ LEEP หรือจี้ทำให้ปากมดลูกสั้น → เสี่ยงคลอดก่อนกำหนดในการตั้งครรภ์<br><br>3️⃣ <b>ติดตามอย่างใกล้ชิด</b><br>→ ไม่ได้ "ปล่อยทิ้ง" แต่ตรวจทุก 6-12 เดือน<br>→ ถ้าลุกลามเป็น CIN2 แพทย์รักษาทันทีค่ะ<br><br>✅ <b>สรุป</b> ปลอดภัยที่จะรอดูค่ะ ภายใต้การดูแลของแพทย์`,
+    replies:["หายเองกี่เปอร์เซ็นต์?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"เหตุผลการรักษา", next_action:"ให้ข้อมูล"
+  },
+  { code:"D3-Q4", dx:"d3", type:"normal", color:"purple",
+    q:"CIN1 มีโอกาสหายเองกี่เปอร์เซ็นต์ ภายในกี่ปี?",
+    bot:`📊 <b>ตัวเลขจากงานวิจัยค่ะ</b><br><br>🟢 <b>ผลลัพธ์ที่พบ</b><br>• <b>70-80%</b> → หายเองภายใน 1-2 ปี ✅<br>• <b>~10%</b> → คงที่ ไม่เปลี่ยนแปลง<br>• <b>~10-15%</b> → ลุกลามเป็น CIN2 (แพทย์จะรักษา)<br>• <b>&lt;1%</b> → กลายเป็นมะเร็ง (หากไม่ติดตาม)<br><br>🌟 <b>ปัจจัยที่ช่วยให้หายเร็ว</b><br>• ไม่สูบบุหรี่<br>• ภูมิคุ้มกันแข็งแรง<br>• อายุน้อยกว่า 30 ปี (ฟื้นตัวไวกว่า)<br>• HPV หายไปด้วย<br><br>✅ โอกาสของคุณที่จะหายเองสูงกว่าโอกาสที่จะลุกลามมากค่ะ`,
+    replies:["มีอะไรช่วยให้หายเร็วขึ้นไหม?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"การพยากรณ์โรค", next_action:"ให้ข้อมูล"
+  },
+  { code:"D3-Q5", dx:"d3", type:"normal", color:"purple",
+    q:"CIN1 จะกลายเป็น CIN2, CIN3 หรือมะเร็งได้ไหม?",
+    bot:`ตอบตรงๆ ค่ะ 💜<br><br>⚠️ <b>เป็นไปได้ แต่โอกาสน้อยมาก</b><br><br>📊 <b>โอกาสลุกลามจาก CIN1</b><br>• → CIN2/3: ~10-15% (ถ้าไม่ติดตาม)<br>• → มะเร็ง: น้อยกว่า 1% ในช่วง 2 ปี<br><br>⏰ <b>กระบวนการนี้ใช้เวลา</b><br>• CIN1 → CIN2: หลายเดือนถึงหลายปี<br>• CIN2/3 → มะเร็ง: อีก ~10 ปี<br><br>🛡️ <b>ทำไมจึงปลอดภัย</b><br>• แพทย์ตรวจทุก 6-12 เดือน<br>• ถ้าพบว่าลุกลามเป็น CIN2 จะรักษาทันที<br>• การรักษา CIN2/3 ป้องกันมะเร็งได้ >95%<br><br>✅ คุณอยู่ในมือที่ไว้ใจได้ค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","ถ้าไม่หายแพทย์จะรักษาอย่างไร?"],
+    category:"การพยากรณ์โรค", next_action:"ให้ข้อมูล"
+  },
+  { code:"D3-Q6", dx:"d3", type:"normal", color:"purple",
+    q:"หลังตัดชิ้นเนื้อ ปากมดลูกจะเป็นแผล มีผลต่อการตั้งครรภ์ไหม?",
+    bot:`คำถามสำคัญมากค่ะ 💜 โดยเฉพาะถ้ายังต้องการมีบุตร<br><br>🩺 <b>การตัดชิ้นเนื้อ (Biopsy)</b><br>• ตัดเนื้อเพียงเล็กน้อยมาก (ขนาดประมาณ 2-3 มม.)<br>• แผลเล็ก หายเองได้ใน 1-2 สัปดาห์<br>• <b>โดยทั่วไปไม่มีผลต่อการตั้งครรภ์</b>ค่ะ ✅<br><br>⚠️ <b>ที่อาจมีผล (ถ้าจำเป็นต้องรักษาในอนาคต)</b><br>• <b>LEEP/Conization</b> (การตัดปากมดลูกออกมากขึ้น) อาจทำให้ปากมดลูกสั้นลง<br>• เสี่ยงคลอดก่อนกำหนดเพิ่มขึ้นเล็กน้อย<br><br>💡 <b>ถ้าวางแผนตั้งครรภ์</b><br>แจ้งแพทย์ให้ทราบค่ะ แพทย์จะวางแผนดูแลให้เหมาะสมกับคุณโดยเฉพาะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","มีอะไรช่วยให้หายเร็วขึ้นไหม?"],
+    category:"คุณภาพชีวิต", next_action:"ให้ข้อมูล"
+  },
+  { code:"D3-Q7", dx:"d3", type:"normal", color:"purple",
+    q:"หลังตัดชิ้นเนื้อ มีเลือดออกหรือตกขาวสีน้ำตาล ปกติไหม?",
+    bot:`ปกติค่ะ ไม่ต้องกังวล 💜<br><br>✅ <b>อาการที่ปกติหลัง Biopsy (1-2 สัปดาห์แรก)</b><br>• ตกขาวสีน้ำตาล/ดำ (จากยาสมาน)<br>• เลือดออกเล็กน้อย ไม่มากกว่าประจำเดือน<br>• รู้สึกไม่สบายเล็กน้อยบริเวณท้องน้อย<br><br>❌ <b>งดในช่วง 2 สัปดาห์แรก</b><br>• การมีเพศสัมพันธ์<br>• แช่น้ำ/ว่ายน้ำ<br>• ยกของหนัก<br><br>🚨 <b>มาพบแพทย์ทันทีถ้า</b><br>• เลือดออกมากกว่าประจำเดือน<br>• มีไข้ > 38°C<br>• ตกขาวมีกลิ่นเหม็นมาก<br>• ปวดท้องรุนแรงขึ้นเรื่อยๆ`,
+    replies:["อาการที่ต้องรีบพบแพทย์","มีคำถามอื่นอีกไหม?"],
+    category:"อาการหลังหัตถการ", next_action:"ให้ข้อมูล safety"
+  },
+  { code:"D3-Q8", dx:"d3", type:"normal", color:"purple",
+    q:"ต้องมาตรวจซ้ำเมื่อไหร่ และตรวจอะไรบ้าง?",
+    bot:`📅 <b>แผนการติดตามสำหรับ CIN1 ค่ะ</b><br><br>🔹 <b>6 เดือน</b> หลัง Biopsy → Co-test (Pap + HPV)<br>🔹 <b>12 เดือน</b> → Co-test อีกครั้ง<br><br>📌 <b>ผลที่เป็นไปได้ที่ 12 เดือน</b><br>• ทั้ง Pap และ HPV ปกติ → กลับตรวจตามปกติ 3 ปี 🎉<br>• ยังผิดปกติ → Colposcopy ซ้ำ<br>• พบ CIN2+ → วางแผนรักษา<br><br>⏰ <b>ถ้า CIN1 ยังคงอยู่นาน 2+ ปี</b><br>แพทย์อาจพิจารณารักษา (LEEP) เพื่อป้องกันไม่ให้รอนานเกินไปค่ะ<br><br>✅ ตารางนี้ออกแบบมาเพื่อจับการเปลี่ยนแปลงให้เร็วที่สุดค่ะ`,
+    replies:["ถ้าไม่หายแพทย์จะรักษาอย่างไร?","มีอะไรช่วยให้หายเร็วขึ้นไหม?"],
+    category:"การติดตาม", next_action:"นัดตาม"
+  },
+  { code:"D3-Q9", dx:"d3", type:"normal", color:"purple",
+    q:"ถ้ารอแล้วไม่หาย แพทย์จะรักษาด้วยวิธีอะไร?",
+    bot:`ขอให้รู้ว่ามีทางเลือกที่ชัดเจนนะคะ 💜<br><br>🔧 <b>วิธีรักษาหลัก (ถ้าจำเป็น)</b><br><br>🔹 <b>LEEP (Loop Electrosurgical Excision Procedure)</b><br>• ตัดรอยโรคออกด้วยลวดไฟฟ้า<br>• ทำภายใต้ยาชาเฉพาะที่<br>• ใช้เวลา ~15 นาที<br>• ผลสำเร็จ >90%<br><br>🔹 <b>จี้ด้วยความเย็น (Cryotherapy)</b><br>• แช่แข็งรอยโรคด้วยไนโตรเจนเหลว<br>• ไม่เจ็บมาก<br>• เหมาะกับรอยโรคขนาดเล็ก<br><br>🔹 <b>จี้เลเซอร์ (Laser ablation)</b><br>• ใช้แสงเลเซอร์ทำลายรอยโรค<br><br>✅ วิธีที่เลือกขึ้นอยู่กับขนาดและตำแหน่งรอยโรค แพทย์จะแนะนำที่เหมาะสมที่สุดค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","มีคำถามอื่นอีกไหม?"],
+    category:"แผนการรักษาอนาคต", next_action:"ให้ข้อมูล"
+  },
+  { code:"D3-Q10", dx:"d3", type:"normal", color:"purple",
+    q:"มีอะไรที่ทำให้รอยโรคหายเร็วขึ้นได้บ้าง?",
+    bot:`มีสิ่งที่ทำได้ค่ะ 🌿<br><br>✅ <b>ช่วยให้ร่างกายสู้ได้ดีขึ้น</b><br>• 🚭 <b>งดสูบบุหรี่</b> — สำคัญที่สุด! บุหรี่ลด local immunity ที่ปากมดลูก<br>• 😴 <b>นอนหลับ 7-9 ชม.</b><br>• 🥦 <b>อาหารที่มีวิตามิน C, E, Folate</b> — ผัก ผลไม้หลากสี<br>• 💊 <b>Folate/กรดโฟลิก</b> — งานวิจัยบางส่วนแนะนำ ปรึกษาแพทย์ก่อนนะคะ<br>• 🏃 <b>ออกกำลังกายสม่ำเสมอ</b><br><br>❌ <b>หลีกเลี่ยง</b><br>• บุหรี่ทุกชนิด<br>• แอลกอฮอล์มากเกินไป<br>• ความเครียดเรื้อรัง<br><br>⚠️ ยังไม่มีอาหารเสริมหรือยาที่พิสูจน์ว่ารักษา CIN1 โดยตรงนะคะ ระวังผลิตภัณฑ์หลอกลวงค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","มีคำถามอื่นอีกไหม?"],
+    category:"การดูแลตัวเอง", next_action:"ให้ข้อมูล"
+  },
+  { code:"D3-Q11", dx:"d3", type:"safety", color:"purple",
+    q:"อาการแบบไหนที่ต้องรีบกลับมาพบแพทย์ก่อนนัด?",
+    bot:`🚨 <b>อาการที่ต้องมาพบแพทย์ทันที</b><br><br>❗ <b>มาทันที ถ้ามีอาการเหล่านี้หลัง Biopsy</b><br>• เลือดออกทางช่องคลอด<b>มากกว่าประจำเดือน</b><br>• มีไข้ > 38°C ร่วมกับปวดท้องน้อย<br>• ตกขาวมีกลิ่นเหม็นผิดปกติ สีเหลือง/เขียว<br>• ปวดท้องน้อยรุนแรง หรือรุนแรงขึ้นเรื่อยๆ<br>• เลือดออกนาน > 2 สัปดาห์หลัง Biopsy<br><br>❗ <b>มาทันที ถ้ามีอาการเหล่านี้ระหว่างติดตาม</b><br>• เลือดออกผิดปกติ (ไม่ใช่ประจำเดือน)<br>• ปวดอุ้งเชิงกรานต่อเนื่อง<br>• เลือดออกหลังมีเพศสัมพันธ์<br><br>📞 ติดต่อหน่วย Colposcopy ก่อนมาค่ะ`,
+    replies:["ติดต่อเจ้าหน้าที่","กลับหน้าหลัก"],
+    category:"Safety", next_action:"Escalate",
+    safety_note:"Priority trigger — แจ้ง staff ทันที"
+  },
+  { code:"D3-Q12", dx:"d3", type:"emotion", color:"purple",
+    q:"รู้สึกโกรธที่ต้องรอ ทำไมแพทย์ไม่รักษาตั้งแต่ต้น?",
+    bot:`ความรู้สึกโกรธของคุณเป็นเรื่องที่เข้าใจได้มากค่ะ 💜<br><br>ถ้าพบว่ามีอะไรในร่างกายแล้วบอกว่า "รอดูก่อน" มันน่าหงุดหงิดมากเลย ไม่ได้แปลว่าคุณคิดผิดนะคะ<br><br>🔍 <b>เหตุผลที่แพทย์เลือกรอ (ไม่ใช่ไม่ใส่ใจ)</b><br>• CIN1 มีโอกาส 70-80% ที่จะหายเองค่ะ<br>• การรักษา (LEEP) มีผลข้างเคียง เช่น ปากมดลูกสั้น เสี่ยงคลอดก่อนกำหนด<br>• "รักษาทุกคน" = ทำให้คนที่จะหายเองต้องรับผลข้างเคียงโดยไม่จำเป็น<br><br>🛡️ <b>คุณไม่ได้ถูกทิ้งไว้คนเดียว</b><br>แพทย์ตรวจติดตามทุก 6-12 เดือน และจะรักษาทันทีหากจำเป็นค่ะ<br><br>💜 ถ้ายังรู้สึกไม่มั่นใจ อยากคุยกับแพทย์โดยตรงเพื่อถามเพิ่มเติมได้เลยนะคะ`,
+    replies:["คุยกับเจ้าหน้าที่","ตรวจซ้ำเมื่อไหร่?"],
+    category:"สนับสนุนจิตใจ", next_action:"เสนอ staff handoff",
+    emotion_note:"รับรู้ความโกรธ (ไม่ dismiss) → อธิบายเหตุผล → เสริมว่าไม่ถูกทอดทิ้ง → เสนอคุยแพทย์"
+  },
+
+  // ─── DX4 ───
+  { code:"D4-Q1", dx:"d4", type:"normal", color:"green",
+    q:"ASCUS คืออะไร น่ากังวลไหม?",
+    bot:`บอกตรงๆ เลยนะคะ 💚<br><br>🔬 <b>ASCUS ย่อมาจาก Atypical Squamous Cells of Undetermined Significance</b><br>แปลว่า "เซลล์น่าสงสัยที่ไม่แน่ชัดว่าสำคัญแค่ไหน"<br><br>⚠️ <b>ฟังดูน่ากลัว แต่จริงๆ แล้ว</b><br>• เป็นผลที่ "คลุมเครือที่สุด" ของ Pap smear<br>• พบได้บ่อยมากค่ะ<br>• ส่วนใหญ่มีสาเหตุจากอะไรที่ไม่ร้ายแรง เช่น การอักเสบ ฮอร์โมนเปลี่ยน<br><br>✅ <b>กรณีของคุณ: ASCUS + HPV ลบ</b><br>นี่คือ combination ที่<u>ความเสี่ยงต่ำที่สุด</u>ค่ะ แทบไม่น่ากังวลเลย<br><br>📊 โอกาสที่จะพบ CIN2+ ในกลุ่มนี้น้อยกว่า 2%`,
+    replies:["HPV ลบ แต่ยังผิดปกติ เกิดจากอะไร?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"ความเข้าใจผล", next_action:"ให้ข้อมูล"
+  },
+  { code:"D4-Q2", dx:"d4", type:"normal", color:"green",
+    q:"ถ้า HPV ลบ แล้ว ASCUS เกิดจากอะไร?",
+    bot:`คำถามดีมากค่ะ 💚 ASCUS ไม่ได้เกิดจาก HPV เสมอไปค่ะ<br><br>🔍 <b>สาเหตุที่พบบ่อยของ ASCUS HPV–</b><br><br>🔹 <b>ชั่วคราว — หายเองได้</b><br>• การอักเสบของปากมดลูก (เช่น จากเชื้อแบคทีเรีย ยีสต์)<br>• ฮอร์โมนเปลี่ยนแปลง (ใกล้หมดประจำเดือน ให้นมบุตร)<br>• ภาวะผิวแห้ง (Atrophy) ในวัยหมดประจำเดือน<br>• การระคายเคืองจากสิ่งแปลกปลอม<br><br>🔹 <b>เซลล์ถูกอ่านผลผิดพลาด</b><br>• บางครั้ง Pap อาจ "เห็น" เซลล์ผิดปกติทั้งที่จริงไม่ผิดปกติ<br><br>✅ HPV ลบ แปลว่าสาเหตุที่น่ากังวลที่สุดถูกตัดออกแล้วค่ะ`,
+    replies:["โอกาสเป็นมะเร็งมีแค่ไหน?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"สาเหตุ", next_action:"ให้ข้อมูล"
+  },
+  { code:"D4-Q3", dx:"d4", type:"normal", color:"green",
+    q:"ถ้า HPV ลบและเป็น ASCUS โอกาสเป็นมะเร็งมีแค่ไหน?",
+    bot:`บอกตัวเลขที่แม่นยำเลยนะคะ 💚<br><br>📊 <b>ความเสี่ยงของ ASCUS + HPV–</b><br>• โอกาสพบ CIN2+: <b>~0.5-2%</b><br>• โอกาสพบมะเร็ง: <b>&lt;0.1%</b> ค่ะ<br><br>🌟 <b>เปรียบเทียบ</b><br>• ASCUS + HPV+: ~6-7%<br>• ASCUS + HPV–: <b>~1-2%</b> ← คุณอยู่ตรงนี้<br>• LSIL + HPV+: ~15%<br><br>✅ ความเสี่ยงของคุณต่ำมากค่ะ การมาตรวจซ้ำตามนัดเป็นเพียงการยืนยัน ไม่ใช่เพราะแพทย์กังวลมากอะไรค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","หายเองได้ไหม?"],
+    category:"การพยากรณ์โรค", next_action:"ให้ข้อมูล"
+  },
+  { code:"D4-Q4", dx:"d4", type:"normal", color:"green",
+    q:"ทำไมถึงไม่ต้องทำ Colposcopy?",
+    bot:`เพราะแนวทางการแพทย์ระบุชัดเจนค่ะ 💚<br><br>🎯 <b>ASCUS + HPV– ไม่จำเป็นต้องทำ Colposcopy</b><br><br>📋 <b>เหตุผล</b><br>• ความเสี่ยงต่ำมากจนไม่คุ้มกับขั้นตอนที่รุกล้ำมากขึ้น<br>• Colposcopy มีค่าใช้จ่ายและอาจมีความไม่สบายใจ<br>• แค่ตรวจ Pap ซ้ำใน 3 ปี ก็เพียงพอค่ะ ตาม ASCCP guideline<br><br>🛡️ <b>ถ้า HPV บวก หรือ Pap ยังผิดปกติในครั้งถัดไป</b><br>แพทย์จะพิจารณา Colposcopy ในขั้นนั้นค่ะ<br><br>✅ กรณีของคุณ แค่ตรวจตามนัดในอีก 1-3 ปีก็เพียงพอแล้วค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","ยังต้องระวัง HPV ไหม?"],
+    category:"เหตุผลการรักษา", next_action:"ให้ข้อมูล"
+  },
+  { code:"D4-Q5", dx:"d4", type:"normal", color:"green",
+    q:"ASCUS HPV negative หายเองได้ไหม?",
+    bot:`ได้ค่ะ! และส่วนใหญ่ก็หายเองด้วยค่ะ 💚<br><br>📊 <b>ผลลัพธ์ที่พบบ่อย</b><br>• <b>&gt;90%</b> ของ ASCUS HPV– กลับมา Pap ปกติในการตรวจครั้งถัดไปค่ะ<br>• ส่วนใหญ่หายเองภายใน 1-3 ปี<br><br>🌿 <b>ร่างกายจัดการเองได้ผ่าน</b><br>• การซ่อมแซมเซลล์ตามธรรมชาติ<br>• การหายของการอักเสบ<br>• การปรับฮอร์โมน<br><br>✅ กรณีของคุณ แค่มาตรวจตามนัดเพื่อยืนยันว่าหายแล้วก็เพียงพอค่ะ ไม่ต้องกังวลมากค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","มีคำถามอื่นอีกไหม?"],
+    category:"การพยากรณ์โรค", next_action:"ให้ข้อมูล"
+  },
+  { code:"D4-Q6", dx:"d4", type:"normal", color:"green",
+    q:"ต้องมาตรวจซ้ำเมื่อไหร่? ตรวจ Pap อีกครั้งหรือเปล่า?",
+    bot:`📅 <b>แผนการติดตาม ASCUS HPV– ค่ะ</b><br><br>ตามแนวทาง ASCCP 2019:<br><br>🔹 ตรวจซ้ำใน <b>3 ปี</b> (Pap smear อย่างเดียว หรือ Co-test)<br><br>⚡ <b>ยกเว้นถ้าคุณอยู่ในกลุ่มเสี่ยงสูงขึ้น</b><br>→ แพทย์อาจนัดเร็วกว่านี้ตาม clinical judgment<br><br>✅ <b>สิ่งที่ต้องทำ</b><br>• จดวันนัดครั้งถัดไปไว้<br>• มาตรวจตามนัดทุกครั้ง<br>• ถ้ามีอาการผิดปกติระหว่างรอ รีบมาก่อนนัดได้เลยค่ะ<br><br>🎉 ข่าวดี: กรณีของคุณไม่ต้องตรวจบ่อยมากค่ะ`,
+    replies:["ยังต้องระวัง HPV ไหม?","มีคำถามอื่นอีกไหม?"],
+    category:"การติดตาม", next_action:"นัดตาม"
+  },
+  { code:"D4-Q7", dx:"d4", type:"normal", color:"green",
+    q:"สาเหตุอื่นที่ทำให้ Pap ผิดปกติโดยไม่มี HPV มีอะไรบ้าง?",
+    bot:`มีหลายสาเหตุค่ะ 💚<br><br>🔍 <b>สาเหตุที่พบบ่อย</b><br><br>🔹 <b>การอักเสบ (Infection)</b><br>• เชื้อแบคทีเรีย (Bacterial vaginosis)<br>• เชื้อยีสต์ (Candida)<br>• Trichomonas<br><br>🔹 <b>ฮอร์โมน</b><br>• วัยหมดประจำเดือน (Atrophic vaginitis)<br>• ผู้ที่กำลังให้นมบุตร<br>• การใช้ยาฮอร์โมน<br><br>🔹 <b>อื่นๆ</b><br>• เซลล์ระคายเคืองจากห่วงอนามัย IUD<br>• เซลล์เยื่อบุมดลูก (Endometrial cells) หลุดออกมา<br>• คุณภาพการเก็บตัวอย่างวันนั้น<br><br>✅ ส่วนใหญ่สาเหตุเหล่านี้ไม่ร้ายแรง และหายได้เองค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","มีคำถามอื่นอีกไหม?"],
+    category:"ความรู้", next_action:"ให้ข้อมูล"
+  },
+  { code:"D4-Q8", dx:"d4", type:"safety", color:"green",
+    q:"อาการแบบไหนที่ต้องกลับมาพบแพทย์ก่อนนัด?",
+    bot:`🚨 <b>อาการที่ต้องมาพบแพทย์ก่อนนัดค่ะ</b><br><br>❗ <b>มาทันทีถ้ามี</b><br>• เลือดออกทางช่องคลอดผิดปกติ (ไม่ใช่ประจำเดือน)<br>• เลือดออกหลังมีเพศสัมพันธ์<br>• ตกขาวมีกลิ่นผิดปกติ สีผิดปกติ (เหลือง/เขียว/เทา)<br>• ปวดอุ้งเชิงกรานที่รุนแรงหรือต่อเนื่อง<br>• มีไข้สูง<br><br>💡 <b>กรณีของคุณ</b><br>ความเสี่ยงต่ำมาก แต่ร่างกายจะส่งสัญญาณถ้ามีอะไรผิดปกติค่ะ<br><br>📞 ติดต่อคลินิกได้ตามเวลาทำการนะคะ`,
+    replies:["ติดต่อเจ้าหน้าที่","กลับหน้าหลัก"],
+    category:"Safety", next_action:"Escalate ถ้ากด",
+    safety_note:"ทริกเกอร์ถ้าพิมพ์อาการ"
+  },
+  { code:"D4-Q9", dx:"d4", type:"normal", color:"green",
+    q:"ฉันยังต้องระวังเรื่อง HPV อยู่ไหม แม้ผลลบแล้ว?",
+    bot:`ยังควรระวังอยู่ค่ะ แต่ไม่ต้องกังวลเกินเหตุนะคะ 💚<br><br>🦠 <b>HPV ลบ แปลว่าอะไร?</b><br>• ขณะที่ตรวจ ไม่พบ HPV ในระดับที่ detect ได้<br>• ไม่ได้แปลว่า "ติดเชื้อไม่ได้ตลอดชีวิต"<br><br>🛡️ <b>การป้องกันที่แนะนำ</b><br>• ใช้ถุงยางอนามัย (ลดความเสี่ยง แต่ไม่ใช่ 100%)<br>• ฉีดวัคซีน HPV ถ้ายังไม่เคยฉีด<br>• มาตรวจ Pap ตามนัดอย่างสม่ำเสมอ<br><br>📋 <b>วัคซีน HPV</b><br>ถ้ายังอายุไม่ถึง 45 ปี ยังฉีดได้ประโยชน์อยู่ค่ะ ปรึกษาแพทย์ได้เลย`,
+    replies:["ฉีดวัคซีน HPV ตอนนี้ยังได้ไหม?","มีคำถามอื่นอีกไหม?"],
+    category:"การป้องกัน", next_action:"ให้ข้อมูล"
+  },
+  { code:"D4-Q10", dx:"d4", type:"emotion", color:"green",
+    q:"รู้สึกโล่งใจ แต่ยังไม่มั่นใจ 100% จะทำอย่างไร?",
+    bot:`ความรู้สึกแบบนี้เป็นเรื่องปกติมากค่ะ 💚<br><br>"โล่งใจ แต่ยังไม่ 100%" นี่คือความรู้สึกที่สมเหตุสมผลมากสำหรับคนที่เพิ่งได้รับข่าวผลตรวจ<br><br>🌟 <b>สิ่งที่ช่วยสร้างความมั่นใจได้</b><br>• <b>ตัวเลข</b>: ความเสี่ยงของคุณ (~1-2%) ต่ำมากค่ะ<br>• <b>การกระทำ</b>: การมาตรวจตามนัดคือสิ่งที่ดีที่สุดที่ทำได้ตอนนี้ค่ะ<br>• <b>การรับรู้</b>: ความไม่แน่นอนเล็กน้อยยังคงมีอยู่เสมอ แต่แพทย์ดูแลคุณอยู่ค่ะ<br><br>💡 <b>ถ้ายังไม่มั่นใจ</b><br>ลองจดคำถามที่อยากถามแพทย์ในนัดถัดไปค่ะ การได้คุยกับแพทย์โดยตรงมักช่วยได้มากค่ะ`,
+    replies:["คุยกับเจ้าหน้าที่","มีคำถามอื่นอีกไหม?"],
+    category:"สนับสนุนจิตใจ", next_action:"เสนอ staff handoff",
+    emotion_note:"ยืนยันความรู้สึก → ให้ตัวเลขชัดเจน → เน้นการกระทำ → เสนอช่องทาง"
+  },
+
+  // ─── DX5 ───
+  { code:"D5-Q1", dx:"d5", type:"normal", color:"amber",
+    q:"Colposcopy ปกติ แต่ Pap ยังผิดปกติ เชื่อถือผลไหนได้มากกว่า?",
+    bot:`คำถามที่ดีมากค่ะ และเข้าใจว่าสับสนแน่ๆ 🟠<br><br>🔬 <b>ทำความเข้าใจก่อนนะคะ</b><br><br>📋 <b>Pap smear</b><br>• Sensitivity: ~55-80% (อาจพลาดรอยโรคจริงได้)<br>• เป็น "net" ที่จับผิดปกติแบบกว้างๆ บางครั้งอ่านผิดพลาดได้ค่ะ<br><br>🔭 <b>Colposcopy</b><br>• แพทย์มองเห็นปากมดลูกโดยตรง<br>• Specificity สูงกว่า — ถ้า Colpo ปกติ มักแปลว่าปกติจริงๆ<br><br>✅ <b>โดยรวม Colposcopy ให้ข้อมูลที่ชัดเจนกว่าค่ะ</b><br>แต่การที่ Pap ผิดปกติก็ยังต้องติดตามต่อ เผื่อรอยโรคเล็กมากที่ยังมองไม่เห็น`,
+    replies:["ทำไมไม่ตัดชิ้นเนื้อ?","Colposcopy ปกติหมายความว่าอะไร?"],
+    category:"ความเข้าใจผล", next_action:"ให้ข้อมูล"
+  },
+  { code:"D5-Q2", dx:"d5", type:"normal", color:"amber",
+    q:"ทำไมแพทย์ไม่ตัดชิ้นเนื้อทั้งๆ ที่ Pap ผิดปกติ?",
+    bot:`เข้าใจว่าอยากให้ตัดเพื่อให้รู้ชัดเลย แต่มีเหตุผลทางการแพทย์ค่ะ 🟠<br><br>⚖️ <b>หลักการ "ตัดเมื่อมีสิ่งที่ต้องตัด"</b><br><br>🔭 <b>Colposcopy ปกติ แปลว่า</b><br>• แพทย์มองไม่เห็นรอยโรคที่ชัดเจนพอที่จะตัด<br>• การตัดชิ้นเนื้อโดยไม่เห็นรอยโรคชัดๆ = เสี่ยงได้ผลลบลวง และมีผลข้างเคียง<br><br>❌ <b>Biopsy ที่ไม่มีเป้าหมายชัดเจน</b><br>• อาจตัดในตำแหน่งที่ไม่ใช่รอยโรคจริง<br>• มีผลข้างเคียง: เลือดออก เจ็บ แผล<br>• อาจได้ผล false negative<br><br>✅ <b>แผนปัจจุบัน: ติดตาม Co-testing</b><br>ถ้าครั้งถัดไป Pap ยังผิดปกติ หรือ HPV บวก แพทย์จะพิจารณา Colposcopy ซ้ำและอาจตัดชิ้นเนื้อค่ะ`,
+    replies:["มีโอกาส Colposcopy พลาดไหม?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"เหตุผลการรักษา", next_action:"ให้ข้อมูล"
+  },
+  { code:"D5-Q3", dx:"d5", type:"normal", color:"amber",
+    q:"Colposcopy คืออะไร แตกต่างจาก Pap อย่างไร?",
+    bot:`อธิบายให้ชัดเจนเลยค่ะ 🟠<br><br>📋 <b>Pap smear</b><br>• ใช้ไม้เล็กๆ ป้ายเก็บเซลล์จากปากมดลูก<br>• ส่งไปตรวจที่ห้องแล็บ<br>• ผล: ปกติ / ผิดปกติ (ASCUS, LSIL, HSIL)<br>• เวลา: 5 นาที<br><br>🔭 <b>Colposcopy</b><br>• ใช้กล้องขยาย (Colposcope) ส่องดูปากมดลูกโดยตรง<br>• แพทย์ทาสี (Acetic acid/Lugol's iodine) เพื่อดูรอยโรค<br>• เห็นได้ทันทีว่ามีรอยโรคไหม<br>• เวลา: 15-30 นาที<br>• อาจตัดชิ้นเนื้อถ้าพบรอยโรค<br><br>🎯 <b>ประสิทธิภาพ</b><br>Colposcopy เห็นได้ชัดกว่า Pap มากค่ะ ถือว่าเป็น Gold standard`,
+    replies:["Colposcopy ปกติหมายความว่าอะไร?","มีโอกาสพลาดไหม?"],
+    category:"ความรู้", next_action:"ให้ข้อมูล"
+  },
+  { code:"D5-Q4", dx:"d5", type:"normal", color:"amber",
+    q:"ถ้า Colposcopy ปกติ หมายความว่าไม่มีรอยโรคจริงๆ ใช่ไหม?",
+    bot:`ส่วนใหญ่ใช่ค่ะ แต่มีข้อแม้เล็กน้อยนะคะ 🟠<br><br>✅ <b>Colposcopy ปกติ แปลว่า</b><br>• แพทย์ผู้เชี่ยวชาญมองไม่เห็นรอยโรคที่ชัดเจน<br>• ในบริเวณที่มองเห็นได้ ไม่มีสิ่งน่ากังวล<br>• ความเสี่ยงต่ำมากค่ะ<br><br>⚠️ <b>ข้อจำกัดของ Colposcopy (มีน้อยมาก)</b><br>• รอยโรคขนาดเล็กมากอาจมองไม่เห็น<br>• รอยโรคในตำแหน่งที่เข้าถึงได้ยาก (ในคอมดลูก)<br>• ในกรณีนี้แพทย์อาจทำ Endocervical Curettage (ECC) เพิ่มด้วย<br><br>📊 <b>ความน่าเชื่อถือ</b><br>Colposcopy ปกติ + ไม่มีรอยโรคที่เห็น มีโอกาส >95% ที่จะไม่มีรอยโรคระดับสูงค่ะ`,
+    replies:["มีโอกาส Colposcopy พลาดไหม?","ตรวจซ้ำเมื่อไหร่?"],
+    category:"ความเข้าใจผล", next_action:"ให้ข้อมูล"
+  },
+  { code:"D5-Q5", dx:"d5", type:"normal", color:"amber",
+    q:"มีโอกาสไหมที่ Colposcopy จะพลาด แล้วมีรอยโรคอยู่จริงๆ?",
+    bot:`ตอบตรงๆ ค่ะ 🟠 โอกาสมีน้อยมาก แต่ไม่ใช่ศูนย์<br><br>📊 <b>ประสิทธิภาพของ Colposcopy</b><br>• Sensitivity: ~85-95% สำหรับ CIN2+<br>• พลาดได้ ~5-15% โดยเฉพาะรอยโรคขนาดเล็กมาก<br><br>🔍 <b>ทำไมบางครั้งพลาด</b><br>• รอยโรคซ่อนอยู่ในคอมดลูก (ไม่เห็นตรงๆ)<br>• รอยโรคขนาด &lt;2 มม.<br>• รอยโรคกระจายหลายจุด<br><br>🛡️ <b>ระบบป้องกันการพลาด</b><br>• ติดตาม Co-test ทุก 6-12 เดือน<br>• ถ้า Pap ยังผิดปกติ → Colposcopy ซ้ำ<br>• ระบบ "net 2 ชั้น" ที่ Pap + Colpo ช่วยกัน<br><br>✅ นั่นคือเหตุผลที่ต้องติดตามต่อแม้ Colpo ปกติค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","รอยโรคในตำแหน่งที่มองไม่เห็น?"],
+    category:"ความน่าเชื่อถือ", next_action:"ให้ข้อมูล"
+  },
+  { code:"D5-Q6", dx:"d5", type:"normal", color:"amber",
+    q:"ถ้ารอยโรคอยู่ในตำแหน่งที่มองไม่เห็น จะรู้ได้อย่างไร?",
+    bot:`แพทย์มีวิธีรับมือค่ะ 🟠<br><br>🔍 <b>ตำแหน่งที่ Colposcope มองยาก</b><br>• Squamocolumnar junction (SCJ) ที่อยู่ลึกในคอมดลูก<br>• พบบ่อยในผู้หญิงอายุมากขึ้น หรือหลังวัยหมดประจำเดือน<br><br>🛠️ <b>วิธีที่แพทย์ใช้เสริม</b><br>• <b>Endocervical Curettage (ECC)</b> — ขูดเก็บเซลล์จากในคอมดลูก<br>• <b>ดู Pap ต่อเนื่อง</b> — ถ้ายังผิดปกติซ้ำๆ = สัญญาณว่ามีอะไรบางอย่าง<br>• <b>Colposcopy ซ้ำ</b> โดยผู้เชี่ยวชาญ<br><br>📋 ถ้า Colposcopy ของคุณ "ประเมินไม่ได้เพียงพอ" (Unsatisfactory) แพทย์จะแจ้งและวางแผนต่อค่ะ<br><br>✅ ระบบมีชั้นความปลอดภัยหลายชั้นค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","มีคำถามอื่นอีกไหม?"],
+    category:"ความน่าเชื่อถือ", next_action:"ให้ข้อมูล"
+  },
+  { code:"D5-Q7", dx:"d5", type:"normal", color:"amber",
+    q:"ต้องมาตรวจซ้ำเมื่อไหร่? ตรวจ Pap หรือ Colposcopy อีกครั้ง?",
+    bot:`📅 <b>แผนการติดตามสำหรับกรณีของคุณค่ะ</b><br><br>สำหรับ Low-grade Pap + Colposcopy ปกติ (ไม่ตัดชิ้นเนื้อ):<br><br>🔹 <b>6-12 เดือน</b> → <b>Co-test</b> (Pap + HPV)<br><br>📌 <b>ผลที่เป็นไปได้</b><br>• ทั้ง Pap และ HPV ปกติ → กลับสู่การตรวจปกติ 3 ปี 🎉<br>• Pap ยังผิดปกติ หรือ HPV บวก → Colposcopy ซ้ำค่ะ<br><br>⚠️ <b>กรุณามาตามนัด</b><br>การติดตามต่อเนื่องเป็นแผนที่สำคัญที่สุดสำหรับกรณีของคุณค่ะ อย่าหยุดตรวจเองโดยไม่ปรึกษาแพทย์`,
+    replies:["ตรวจหลายครั้งแล้ว ต้องมาอีกไหม?","มีคำถามอื่นอีกไหม?"],
+    category:"การติดตาม", next_action:"นัดตาม"
+  },
+  { code:"D5-Q8", dx:"d5", type:"safety", color:"amber",
+    q:"ระหว่างรอ มีอาการอะไรที่ต้องรีบพบแพทย์?",
+    bot:`🚨 <b>อาการที่ต้องมาพบแพทย์ทันที</b><br><br>❗ <b>มาทันทีถ้ามี</b><br>• เลือดออกทางช่องคลอดผิดปกติ (ไม่ใช่ประจำเดือน)<br>• เลือดออกหลังมีเพศสัมพันธ์ ติดต่อกันหลายครั้ง<br>• ตกขาวผิดปกติ: มีกลิ่น สีเหลือง/เขียว/มีเลือดปน<br>• ปวดอุ้งเชิงกรานที่รุนแรงหรือต่อเนื่อง<br>• มีไข้สูงร่วมกับปวดท้องน้อย<br><br>📞 ติดต่อหน่วย Colposcopy โดยตรงค่ะ ไม่ต้องรอวันนัด`,
+    replies:["ติดต่อเจ้าหน้าที่","กลับหน้าหลัก"],
+    category:"Safety", next_action:"Escalate",
+    safety_note:"Trigger ถ้าพิมพ์อาการ"
+  },
+  { code:"D5-Q9", dx:"d5", type:"normal", color:"amber",
+    q:"ตรวจหลายครั้งแล้ว ยังต้องมาตรวจซ้ำอีกไหม?",
+    bot:`เข้าใจว่าเหนื่อยกับการตรวจบ้างค่ะ 🟠<br><br>💡 <b>เหตุผลที่ยังต้องติดตาม</b><br>• Pap ยังผิดปกติอยู่ แม้ Colpo ปกติ<br>• ยังต้องดูว่า Pap จะกลับมาปกติได้เองไหม<br>• หรือ HPV จะบวกขึ้นมาไหม<br><br>📅 <b>จะตรวจไปนานแค่ไหน?</b><br>• ถ้า Pap กลับมาปกติ + HPV ลบ → หยุดตรวจถี่ได้ค่ะ<br>• ส่วนใหญ่ใช้เวลา 1-2 ปีในการได้ผลดี<br>• แพทย์จะบอกคุณเมื่อกลับสู่ตารางปกติได้<br><br>✅ <b>ข้อดี</b><br>การติดตามต่อเนื่องทำให้มั่นใจได้ว่าทุกอย่างดีขึ้นหรือถ้ามีอะไรเปลี่ยนแปลงจะจับได้ไวมากค่ะ`,
+    replies:["ตรวจซ้ำเมื่อไหร่?","มีคำถามอื่นอีกไหม?"],
+    category:"การติดตาม", next_action:"ให้ข้อมูล"
+  },
+  { code:"D5-Q10", dx:"d5", type:"emotion", color:"amber",
+    q:"รู้สึกไม่มั่นใจในผลการตรวจ กังวลว่าแพทย์อาจพลาด",
+    bot:`รับรู้ว่ารู้สึกแบบนั้นนะคะ และเป็นเรื่องที่เข้าใจได้มากค่ะ 🟠<br><br>การได้ผลที่ "ไม่แน่ชัด" อย่าง Pap ผิดปกติแต่ Colpo ปกติ ทำให้รู้สึกไม่สบายใจได้มากเลย<br><br>💡 <b>สิ่งที่ควรรู้</b><br>• ความไม่สอดคล้องระหว่าง Pap กับ Colpo พบได้เป็นเรื่องปกติค่ะ<br>• Colposcopy โดยแพทย์ผู้เชี่ยวชาญมีความน่าเชื่อถือสูงมาก<br>• ระบบการติดตามออกแบบมาเพื่อ "จับ" ถ้ามีอะไรพลาดจริงๆ<br><br>🗣️ <b>ถ้ายังไม่มั่นใจ</b><br>การขอ Second opinion จากแพทย์คนอื่นเป็นสิทธิ์ของคุณค่ะ และไม่ได้ผิดอะไร<br><br>💜 พูดคุยความกังวลนี้กับแพทย์หรือพยาบาลโดยตรงได้นะคะ เราพร้อมรับฟังค่ะ`,
+    replies:["คุยกับเจ้าหน้าที่","มีคำถามอื่นอีกไหม?"],
+    category:"สนับสนุนจิตใจ", next_action:"เสนอ staff handoff หรือ second opinion",
+    emotion_note:"รับรู้ → อธิบาย → เสนอ second opinion (สิทธิ์ผู้ป่วย) → เสนอช่องทาง"
+  },
+
+  // ─── SHARED ───
+  { code:"S1", dx:"shared", type:"safety", color:"red",
+    q:"อาการแบบไหนที่ต้องรีบมาพบแพทย์ฉุกเฉิน? (ทุก Diagnosis)",
+    bot:`🚨 <b>อาการฉุกเฉิน — มาพบแพทย์ทันที ไม่ต้องรอนัด</b><br><br>❗❗ <b>มาทันทีถ้ามี</b><br>• เลือดออกทางช่องคลอดมาก หรือ ไม่หยุด<br>• เลือดออกหลังมีเพศสัมพันธ์ ซ้ำๆ<br>• ตกขาวมีกลิ่นเหม็นรุนแรง สีผิดปกติ (เหลือง/เขียว/เทา)<br>• ปวดอุ้งเชิงกรานรุนแรง หรือรุนแรงขึ้นเรื่อยๆ<br>• มีไข้ > 38.5°C ร่วมกับปวดท้องน้อย<br>• อาการหลัง Biopsy: เลือดมาก ไข้ ปวดรุนแรง<br><br>📞 <b>ติดต่อหน่วยก่อนมาค่ะ</b><br><b>เบอร์โทร: [ใส่เบอร์หน่วย]</b><br><br>🏥 ถ้าอาการรุนแรงมาก ไปห้องฉุกเฉินได้เลยนะคะ`,
+    replies:["ติดต่อเจ้าหน้าที่","กลับหน้าหลัก"],
+    category:"Safety — ทุก Dx", next_action:"Escalate ทันที",
+    safety_note:"CRITICAL — ส่ง alert staff ทันทีเมื่อผู้ป่วยถาม S1"
+  },
+  { code:"S2", dx:"shared", type:"shared", color:"amber",
+    q:"ฉีดวัคซีน HPV ตอนนี้ยังได้ประโยชน์ไหม? (ทุก Diagnosis)",
+    bot:`💉 <b>คำตอบขึ้นอยู่กับอายุของคุณค่ะ</b><br><br>✅ <b>อายุ 9-26 ปี</b> — แนะนำให้ฉีดเลยค่ะ ได้ประโยชน์เต็มที่<br>✅ <b>อายุ 27-45 ปี</b> — ยังได้ประโยชน์บ้าง โดยเฉพาะถ้ายังไม่ติด HPV ทุกสายพันธุ์<br>❓ <b>อายุ > 45 ปี</b> — ประโยชน์ลดลง ปรึกษาแพทย์เป็นรายๆ ไปค่ะ<br><br>⚠️ <b>กรณีที่ตรวจพบ HPV แล้ว</b><br>• วัคซีนยังป้องกันสายพันธุ์อื่นที่ยังไม่ติดได้<br>• แต่ไม่ได้รักษาหรือกำจัด HPV ที่มีอยู่แล้ว<br><br>📋 <b>ตาราง</b><br>• อายุ &lt;15 ปี: 2 เข็ม<br>• อายุ ≥15 ปี: 3 เข็ม (0, 1-2, 6 เดือน)<br><br>แนะนำให้ปรึกษาแพทย์ในนัดถัดไปด้วยนะคะ`,
+    replies:["มีเพศสัมพันธ์ได้ไหม?","มีคำถามอื่นอีกไหม?"],
+    category:"การป้องกัน — ทุก Dx", next_action:"ให้ข้อมูล"
+  },
+  { code:"S3", dx:"shared", type:"shared", color:"amber",
+    q:"การมีเพศสัมพันธ์จะทำให้อาการแย่ลงไหม? (ทุก Diagnosis)",
+    bot:`💙 <b>โดยรวมมีเพศสัมพันธ์ได้ค่ะ แต่มีข้อแนะนำ</b><br><br>✅ <b>ทำได้</b><br>• มีเพศสัมพันธ์ได้ตามปกติ (ยกเว้นช่วงหลัง Biopsy 2 สัปดาห์)<br>• ไม่มีหลักฐานว่าการมีเพศสัมพันธ์ทำให้รอยโรคแย่ลงโดยตรง<br><br>🛡️ <b>แนะนำ</b><br>• ใช้ถุงยางอนามัย — ลดความเสี่ยงรับ HPV สายพันธุ์ใหม่<br>• แจ้งคู่รักให้ทราบ<br><br>❌ <b>งดหลัง Biopsy 2 สัปดาห์</b><br>เพื่อให้แผลหายดีก่อนค่ะ<br><br>⚠️ <b>ถ้ามีอาการเหล่านี้หลังมีเพศสัมพันธ์</b><br>• เลือดออก (ไม่ใช่ประจำเดือน)<br>• เจ็บปวดมาก<br>→ มาพบแพทย์ค่ะ`,
+    replies:["บอกคู่รักดีไหม?","มีคำถามอื่นอีกไหม?"],
+    category:"คุณภาพชีวิต — ทุก Dx", next_action:"ให้ข้อมูล"
+  },
+  { code:"S4", dx:"shared", type:"shared", color:"amber",
+    q:"ควรบอกครอบครัวหรือคู่รักเรื่องผลตรวจนี้ไหม? (ทุก Diagnosis)",
+    bot:`เป็นการตัดสินใจส่วนตัวค่ะ ไม่มีใครบังคับได้ 💙<br><br>🗣️ <b>ข้อดีของการบอก</b><br>• ได้รับการสนับสนุนทางอารมณ์<br>• มีคนช่วยพาไปตรวจ ดูแลเมื่อกังวล<br>• คู่รักสามารถตรวจ HPV ได้เช่นกัน<br><br>🔒 <b>ถ้ายังไม่พร้อมบอก</b><br>• เป็นสิทธิ์ของคุณ 100% ค่ะ<br>• ผลตรวจเหล่านี้ส่วนใหญ่ไม่ใช่โรคที่ต้องรีบแจ้งครอบครัวอย่างเร่งด่วน<br><br>💡 <b>ถ้าจะบอกคู่รัก อาจพูดว่า</b><br>"ฉันตรวจพบสิ่งที่ต้องติดตาม ยังไม่ร้ายแรง แต่อยากให้รู้ไว้"<br><br>💜 ถ้าต้องการคุยกับพยาบาลก่อนตัดสินใจ เราพร้อมรับฟังค่ะ`,
+    replies:["คุยกับเจ้าหน้าที่","มีคำถามอื่นอีกไหม?"],
+    category:"จิตสังคม — ทุก Dx", next_action:"ให้ข้อมูล"
+  },
+  { code:"S5", dx:"shared", type:"shared", color:"teal",
+    q:"นัดตรวจครั้งถัดไปของฉันคือวันที่เท่าไหร่?",
+    bot:`📅 <b>นัดตรวจของคุณค่ะ</b><br><br>🗓️ <b>วันที่:</b> [ดึงจากระบบนัดหมาย]<br>🕐 <b>เวลา:</b> [ดึงจากระบบ]<br>📍 <b>สถานที่:</b> ห้องตรวจ Colposcopy ชั้น [X]<br><br>📌 <b>สิ่งที่ต้องเตรียม</b><br>• บัตรประชาชน<br>• บัตรนัด<br>• งดมีเพศสัมพันธ์ 24 ชั่วโมงก่อน (ถ้าต้องตรวจ Pap)<br><br>🔔 <b>Bot จะส่งแจ้งเตือนอัตโนมัติ</b><br>• 3 วันก่อนนัด<br>• 1 วันก่อนนัด<br>• เช้าวันนัด<br><br>ถ้าต้องการเลื่อนนัด กรุณาติดต่อล่วงหน้าอย่างน้อย 2 วันนะคะ`,
+    replies:["เลื่อนนัด","มีคำถามอื่นอีกไหม?"],
+    category:"นัดหมาย — ทุก Dx", next_action:"ดึงข้อมูลจากระบบ"
+  },
+  { code:"S6", dx:"shared", type:"shared", color:"teal",
+    q:"ต้องการคุยกับเจ้าหน้าที่โดยตรง",
+    bot:`💙 <b>รับทราบค่ะ กำลังเชื่อมต่อให้นะคะ</b><br><br>👩‍⚕️ <b>บุคลากรที่พร้อมช่วยคุณ</b><br>• พยาบาลประจำหน่วย Colposcopy<br>• นักวิชาชีพที่ผ่านการฝึกอบรม<br><br>🕐 <b>เวลาทำการ</b><br>• จันทร์–ศุกร์ 08:00–16:00 น.<br>• นอกเวลา: โทรฉุกเฉิน [เบอร์]<br><br>📨 <b>สิ่งที่เกิดขึ้นต่อไป</b><br>เจ้าหน้าที่จะเห็นประวัติการสนทนาของคุณ และจะติดต่อกลับภายใน [X] ชั่วโมงในเวลาทำการค่ะ<br><br>💜 คุณไม่ได้อยู่คนเดียวค่ะ`,
+    replies:["กลับหน้าหลัก"],
+    category:"Staff Handoff — ทุก Dx", next_action:"Trigger staff notification"
+  },
+];
+
+// ════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════
+function makeCard(item, searchTerm) {
+  const hl = (text) => {
+    if (!searchTerm) return text;
+    const re = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+    return text.replace(re, '<mark class="highlight">$1</mark>');
+  };
+
+  const codeClass = item.type === 'safety' ? 'safety' :
+                    item.type === 'emotion' ? 'emotion' :
+                    item.type === 'shared' ? 'shared' : '';
+
+  const extras = item.safety_note ? `<div class="escalate-note">⚠️ <b>Bot Logic:</b> ${item.safety_note}</div>` :
+                 item.emotion_note ? `<div class="emotion-note">💜 <b>Emotion Framework:</b> ${item.emotion_note}</div>` : '';
+
+  const meta = `<div class="meta-grid">
+    <div class="meta-item"><div class="meta-key">ประเภท</div><div class="meta-val">${item.category}</div></div>
+    <div class="meta-item"><div class="meta-key">Action หลัง Bot ตอบ</div><div class="meta-val">${item.next_action}</div></div>
+    <div class="meta-item"><div class="meta-key">Quick Replies</div><div class="meta-val">${item.replies.join(' · ')}</div></div>
+  </div>`;
+
+  const qrs = item.replies.map(r => `<div class="qr-pill">${r}</div>`).join('');
+
+  return `<div class="qa-card" id="card-${item.code}">
+    <div class="qa-card-header" onclick="toggleCard('${item.code}')">
+      <div class="qa-code ${codeClass}">${item.code}</div>
+      <div class="qa-question">${hl(item.q)}</div>
+      <div class="qa-toggle">▾</div>
+    </div>
+    <div class="qa-body">
+      <div class="qa-divider"></div>
+      <div class="bubble-preview">
+        <div class="bubble-label">Chat Preview</div>
+        <div class="bubble-user"><div class="bubble-user-inner">${hl(item.q)}</div></div>
+        <div class="bubble-bot-row">
+          <div class="bubble-bot-avatar">🤖</div>
+          <div>
+            <div class="bubble-bot-inner">${item.bot}</div>
+            <div class="quick-reply-row">${qrs}</div>
+          </div>
+        </div>
+      </div>
+      ${meta}
+      ${extras}
+    </div>
+  </div>`;
+}
+
+function renderGrid(gridId, dxFilter) {
+  const el = document.getElementById(gridId);
+  if (!el) return;
+  const items = data.filter(d => d.dx === dxFilter);
+  el.innerHTML = items.map(i => makeCard(i, '')).join('');
+}
+
+// Render all grids
+['d1','d2','d3','d4','d5','shared'].forEach(dx => {
+  renderGrid('grid-' + dx, dx);
+  renderGrid('grid-' + dx + 'b', dx);
+});
+
+function toggleCard(code) {
+  const card = document.getElementById('card-' + code);
+  card.classList.toggle('open');
+}
+
+// ════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('search-results').style.display = 'none';
+  document.getElementById('search-input').value = '';
+
+  const map = {all:0, d1:1, d2:2, d3:3, d4:4, d5:5, shared:6};
+  document.getElementById('sec-' + id).classList.add('active');
+  document.querySelectorAll('.tab')[map[id]].classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ════════════════════════════════════════════════
+// SEARCH
+// ════════════════════════════════════════════════
+function doSearch(term) {
+  if (!term.trim()) {
+    document.getElementById('search-results').style.display = 'none';
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('sec-all').classList.add('active');
+    document.getElementById('total-count').textContent = data.length + ' คำถาม';
+    return;
+  }
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('search-results').style.display = 'block';
+
+  const t = term.toLowerCase();
+  const found = data.filter(d =>
+    d.q.toLowerCase().includes(t) ||
+    d.bot.toLowerCase().includes(t) ||
+    d.code.toLowerCase().includes(t) ||
+    d.category.toLowerCase().includes(t)
+  );
+
+  document.getElementById('search-title').textContent = `พบ ${found.length} คำถาม สำหรับ "${term}"`;
+  document.getElementById('total-count').textContent = found.length + ' คำถาม';
+  document.getElementById('no-result').style.display = found.length === 0 ? 'block' : 'none';
+  document.getElementById('search-grid').innerHTML = found.map(i => makeCard(i, term)).join('');
+}
+</script>
+</body>
+</html>

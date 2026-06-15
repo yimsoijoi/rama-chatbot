@@ -1,0 +1,160 @@
+default_diagnosis: d1
+user_diagnosis:
+  U11111111111111111111111111111111: d1
+  U22222222222222222222222222222222: d2
+
+diagnoses:
+  d1:
+    name: NILM + hrHPV Other High Risk Positive
+    rich_menu_id: ""   # TODO: paste richmenu-xxx from LINE Console after creating DX1 rich menu
+    faq:
+      D1-Q1:
+        answer: |
+          เข้าใจเลยค่ะ ฟังดูน่าสับสนมากเลย
+          Pap และ HPV เป็นการตรวจคนละอย่างกัน
+          Pap ปกติแปลว่าตอนนี้เซลล์ยังดีอยู่ แต่ HPV บวกแปลว่ามีไวรัสอยู่ จึงต้องติดตามตามนัดค่ะ
+        quick_reply:
+          - HPV หายเองได้ไหม
+          - ทำไมไม่รักษา
+          - ต้องมาตรวจซ้ำเมื่อไหร่
+        match_phrases:
+          - pap ปกติ
+          - ทำไม hpv บวก
+      D1-Q3:
+        answer: |
+          ข่าวดีคือ HPV จำนวนมากหายเองได้ภายใน 1-2 ปี
+          แนะนำพักผ่อนให้พอ งดบุหรี่ และมาตรวจตามนัดเสมอค่ะ
+        quick_reply:
+          - ต้องมาตรวจซ้ำเมื่อไหร่
+          - ระหว่างรอต้องระวังอะไร
+        match_phrases:
+          - hpv หายเอง
+          - หายได้ไหม
+      D1-Q5:
+        answer: |
+          แนวทางทั่วไปคือ Co-testing (Pap + HPV) อีกครั้งใน 12 เดือน
+          หากผลกลับมาปกติทั้งคู่ มักกลับเข้าสู่รอบตรวจตามปกติค่ะ
+        quick_reply:
+          - ระหว่างรอต้องระวังอะไร
+          - ยังมีเพศสัมพันธ์ได้ไหม
+        match_phrases:
+          - ตรวจซ้ำ
+          - มาตรวจเมื่อไหร่
+
+  d2:
+    name: LSIL จาก Cytology
+    rich_menu_id: ""   # TODO: paste richmenu-xxx from LINE Console after creating DX2 rich menu
+    faq:
+      D2-Q1:
+        answer: |
+          LSIL คือเซลล์ผิดปกติระดับต่ำ และยังไม่ใช่มะเร็งค่ะ
+          ส่วนมากมีโอกาสหายเองได้ และแพทย์จะติดตามอย่างใกล้ชิด
+        quick_reply:
+          - ทำไมไม่รักษาทันที
+          - Colposcopy คืออะไร
+        match_phrases:
+          - lsil คืออะไร
+          - เป็นมะเร็งไหม
+      D2-Q5:
+        answer: |
+          Colposcopy คือการส่องกล้องขยายดูปากมดลูกแบบละเอียด
+          โดยมากจะไม่เจ็บมากและใช้เวลาประมาณ 15-30 นาทีค่ะ
+        quick_reply:
+          - ต้องเตรียมตัวอย่างไรก่อนตรวจ
+          - หลังตรวจต้องระวังอะไร
+        match_phrases:
+          - colposcopy
+          - เจ็บไหม
+      D2-Q8:
+        answer: |
+          ขั้นต่อไปคือมาตรวจ Colposcopy ตามนัด
+          ผลหลังตรวจจะเป็นตัวกำหนดแผนติดตามหรือการรักษาต่อไปค่ะ
+        quick_reply:
+          - Colposcopy คืออะไร
+          - ต้องเตรียมตัวก่อนตรวจอย่างไร
+        match_phrases:
+          - ต้องตรวจอะไรต่อ
+          - มาตรวจซ้ำเมื่อไหร่
+
+  d3:
+    name: LSIL จาก Biopsy (CIN1)
+    rich_menu_id: ""   # TODO: paste richmenu-xxx from LINE Console after creating DX3 rich menu
+    faq:
+      D3-Q1:
+        answer: |
+          CIN1 คือรอยโรคระดับต่ำ และยังไม่ใช่มะเร็งค่ะ
+          ส่วนมากสามารถหายเองได้ จึงเน้นการติดตามตามนัดอย่างสม่ำเสมอ
+        quick_reply:
+          - CIN1 เป็นมะเร็งไหม
+          - ทำไมยังไม่ต้องรักษา
+        match_phrases:
+          - cin1 คืออะไร
+          - lsil จาก biopsy
+
+  d4:
+    name: ASCUS + HPV Negative
+    rich_menu_id: ""   # TODO: paste richmenu-xxx from LINE Console after creating DX4 rich menu
+    faq:
+      D4-Q1:
+        answer: |
+          ASCUS คือผลเซลล์ที่ผิดปกติเล็กน้อยและไม่จำเพาะค่ะ
+          เมื่อ HPV เป็นลบ ความเสี่ยงโดยรวมจะต่ำ และมักติดตามตามรอบตรวจปกติ
+        quick_reply:
+          - ต้องตรวจซ้ำเมื่อไหร่
+          - เป็นมะเร็งไหม
+        match_phrases:
+          - ascus คืออะไร
+          - hpv negative
+
+  d5:
+    name: Low-grade + Colposcopy ปกติ
+    rich_menu_id: ""   # TODO: paste richmenu-xxx from LINE Console after creating DX5 rich menu
+    faq:
+      D5-Q1:
+        answer: |
+          หากผล Colposcopy ปกติ แปลว่ายังไม่พบรอยโรคที่ต้องรักษาทันทีค่ะ
+          โดยมากแพทย์จะนัดติดตามซ้ำตามแนวทางที่เหมาะสม
+        quick_reply:
+          - ทำไมไม่ตัดชิ้นเนื้อ
+          - ต้องมาตรวจซ้ำเมื่อไหร่
+        match_phrases:
+          - colposcopy ปกติ
+          - low-grade
+
+shared_faq:
+  S1:
+    answer: |
+      อาการที่ต้องรีบพบแพทย์ทันที: เลือดออกผิดปกติ ปวดอุ้งเชิงกรานรุนแรง ตกขาวมีกลิ่นผิดปกติ หรือมีไข้สูง
+      หากมีอาการเหล่านี้ กรุณาติดต่อโรงพยาบาลทันทีค่ะ
+    quick_reply:
+      - ติดต่อเจ้าหน้าที่
+      - กลับหน้าหลัก
+    match_phrases:
+      - อาการฉุกเฉิน
+      - รีบพบแพทย์
+
+  S6:
+    answer: |
+      หากต้องการคุยกับเจ้าหน้าที่ กรุณาพิมพ์คำว่า "เจ้าหน้าที่"
+      ทางทีมจะประสานงานติดต่อกลับโดยเร็วที่สุดค่ะ
+    quick_reply:
+      - ติดต่อเจ้าหน้าที่
+    match_phrases:
+      - คุยกับเจ้าหน้าที่
+      - ติดต่อเจ้าหน้าที่
+
+escalation:
+  keywords:
+    - เลือดออก
+    - ปวดมาก
+    - ไข้สูง
+    - ตกขาวผิดปกติ
+    - กลัวมาก
+  reply: |
+    เราเป็นห่วงอาการของคุณค่ะ
+    กรุณาไปโรงพยาบาลใกล้บ้านหรือห้องฉุกเฉินทันที
+    และสามารถพิมพ์คำว่า "เจ้าหน้าที่" เพื่อให้ทีมช่วยประสานงานได้ค่ะ
+
+fallback_reply: |
+  ขออภัยค่ะ ตอนนี้บอตยังไม่เข้าใจคำถามนี้
+  คุณสามารถลองพิมพ์คำถามใหม่ หรือพิมพ์ "คุยกับเจ้าหน้าที่" ได้เลยค่ะ
