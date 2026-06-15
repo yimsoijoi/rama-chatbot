@@ -13,7 +13,7 @@ Config-driven LINE chatbot for colposcopy Q&A.
 - `internal/usecase` - business logic for reply building
 - `internal/infrastructure/config` - YAML config loader + repository implementation
 - `internal/interface/http` - LINE webhook HTTP handler
-- `configs/bot.yaml` - chatbot knowledge base and routing config
+- `configs/faq_seed.yaml` - single source of truth: runtime config (routing, escalation, fallback, per-DX rich menu) + FAQ knowledge base (`items`)
 
 ## Run
 
@@ -229,7 +229,7 @@ Based on LINE development guidelines:
 Recommended approach:
 
 1. Design Flex messages with Flex Message Simulator
-2. Define conversation flows as YAML intents/FAQ in `configs/bot.yaml`
+2. Define conversation flows as YAML intents/FAQ in `configs/faq_seed.yaml`
 3. Validate real behavior in a LINE test channel
 4. Measure outcomes in Grafana (fallback rate, latency, error rate)
 5. Iterate copy and UX from metrics + user feedback
@@ -260,7 +260,7 @@ Beginner deployment step-by-step:
 
 ## Config-first workflow
 
-You can expand all 53 scripts from your HTML into `configs/bot.yaml` without changing Go code.
+You can expand all 53 scripts from your HTML into `configs/faq_seed.yaml` without changing Go code.
 
 For each question, add:
 

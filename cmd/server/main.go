@@ -20,7 +20,7 @@ import (
 )
 
 func main() {
-	configPath := getenv("BOT_CONFIG_PATH", "configs/bot.yaml")
+	configPath := getenv("BOT_CONFIG_PATH", "configs/faq_seed.yaml")
 	port := getenv("PORT", "8080")
 	enablePprof := getenv("ENABLE_PPROF", "true")
 	dedupTTL := getenvDuration("EVENT_DEDUP_TTL", 24*time.Hour)
