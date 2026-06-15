@@ -1,0 +1,11 @@
+{$DOMAIN} {
+    encode zstd gzip
+
+    header {
+        X-Frame-Options "DENY"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "no-referrer"
+    }
+
+    reverse_proxy obgynrama-chatbot:8080
+}

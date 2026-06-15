@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  obgynrama-chatbot:
+    image: ${IMAGE_REGISTRY}/${IMAGE_REPOSITORY}:${IMAGE_TAG}
+    container_name: obgynrama-chatbot
+    env_file:
+      - .env.prod
+    restart: unless-stopped
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:2.9-alpine
+    container_name: obgynrama-chatbot-proxy
+    depends_on:
+      - obgynrama-chatbot
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

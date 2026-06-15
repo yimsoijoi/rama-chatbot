@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  obgynrama-chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: obgynrama-chatbot:local
+    container_name: obgynrama-chatbot
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: unless-stopped

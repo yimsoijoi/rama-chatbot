@@ -1,0 +1,129 @@
+name: CI-CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Build
+        run: |
+          go mod tidy
+          go build ./...
+
+      - name: Test
+        run: go test ./...
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=sha
+            type=raw,value=latest
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check deploy configuration
+        id: deploy_check
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          if [ -n "$DEPLOY_HOST" ] && [ -n "$DEPLOY_USER" ] && [ -n "$DEPLOY_SSH_KEY" ] && [ -n "$DEPLOY_PATH" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Deploy secrets are missing. Skipping deploy steps."
+          fi
+
+      - name: Prepare deploy script
+        if: steps.deploy_check.outputs.enabled == 'true'
+        run: chmod +x scripts/deploy_with_rollback.sh
+
+      - name: Copy deploy script to server
+        if: steps.deploy_check.outputs.enabled == 'true'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: "scripts/deploy_with_rollback.sh"
+          target: "${{ secrets.DEPLOY_PATH }}"
+
+      - name: Run deploy script on server
+        if: steps.deploy_check.outputs.enabled == 'true'
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          IMAGE_REGISTRY: ghcr.io
+          IMAGE_REPOSITORY: ${{ github.repository }}
+          IMAGE_TAG: latest
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: IMAGE_REGISTRY,IMAGE_REPOSITORY,IMAGE_TAG
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            chmod +x scripts/deploy_with_rollback.sh
+            IMAGE_REGISTRY="$IMAGE_REGISTRY" IMAGE_REPOSITORY="$IMAGE_REPOSITORY" ./scripts/deploy_with_rollback.sh "$IMAGE_TAG"
