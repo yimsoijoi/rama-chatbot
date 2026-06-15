@@ -1,181 +1,254 @@
 <!-- AI-DRAFT · Created via Claude Code · Model: claude-opus-4-8 · 2026-06-15 -->
 
-# Creating the DX1 Rich Menu in the LINE Console
+# DX1 Rich Menu & Self-Service DX Selection (LINE Messaging API)
 
 > **Status: AI-DRAFT** — review wording and clinical copy with the team before publishing.
 
-This guide walks through building the **DX1 (NILM + hrHPV Other High Risk Positive)** rich menu
-in the LINE Console, then wiring its ID back into this repo so the bot can link it per user.
+This guide finishes the **self-service DX1 flow**: a new user picks their result group from a
+**default menu**, the bot saves it and swaps them to the **DX1 content menu** (FAQ tiles), and taps
+on that menu return answers.
 
-## How the rich menu connects to this bot
+## The flow
 
-The webhook handler ([internal/interface/http/line_handler.go](../internal/interface/http/line_handler.go))
-only understands **text messages**. It matches the incoming text against each FAQ's `match_phrases`
-in [configs/faq_seed.yaml](../configs/faq_seed.yaml), replies with the answer + quick replies, and —
-when a DX is resolved — links that DX's rich menu via `LinkUserRichMenu(userID, rich_menu_id)`.
+```
+New friend ──> DEFAULT menu (เลือก DX1..DX5) ──tap "เลือก DX1"──> bot saves dx=d1,
+            links DX1 content menu (per-user, overrides default) ──> taps return FAQ answers
+```
 
-**Implication:** every tappable area in the DX1 rich menu must use a **Text** action whose text
-matches one of an FAQ's `match_phrases`. In `faq_seed.yaml`, each item's match phrases are its
-**code** (e.g. `D1-Q1`) and its **full question**. The matcher is a case-insensitive substring
-check ([knowledge_repository.go:86](../internal/infrastructure/config/knowledge_repository.go#L86)),
-so **use the full question text** as the action payload — short codes like `D1-Q1` can substring-
-collide with `D1-Q10`. If the text matches nothing, the user gets the `fallback_reply`.
+- The **default** menu is shown to everyone who hasn't picked a DX yet.
+- Tapping a DX button sends a text the bot already understands — `parseDiagnosisSelection`
+  ([reply_usecase.go:159](../internal/usecase/reply_usecase.go#L159)) accepts `เลือก DX1`, `DX1`,
+  `d1`, etc.
+- The bot saves the choice, then `LinkUserRichMenu`
+  ([line_handler.go:163](../internal/interface/http/line_handler.go#L163)) links the DX1 content menu
+  to that user. A **per-user** menu overrides the default and appears immediately.
 
-### DX1 questions the bot can answer
+## ⚠️ Two hard requirements before any of this works
 
-All DX1 items from the clinical script are loaded (`D1-Q1` … `D1-Q10`). Pick the most useful for the
-menu. Suggested 6-tile layout (4 DX1 + shared handoff + emergency):
-
-| Tile label (Thai, on artwork) | Text action sends (full question)                       | FAQ   |
-| ----------------------------- | ------------------------------------------------------- | ----- |
-| Pap ปกติ แต่ทำไม HPV บวก?      | `ผล Pap ปกติ แต่ทำไมแพทย์บอกว่ามี HPV?`                  | D1-Q1 |
-| HPV หายเองได้ไหม?            | `ถ้า Pap ปกติ แล้ว HPV จะหายเองได้ไหม?`                  | D1-Q3 |
-| ต้องตรวจซ้ำเมื่อไหร่?         | `ต้องมาตรวจซ้ำเมื่อไหร่ และตรวจอะไรบ้าง?`                | D1-Q5 |
-| ระหว่างรอต้องระวังอะไร?       | `ระหว่างรอตรวจซ้ำ ต้องระวังอะไรบ้าง?`                    | D1-Q6 |
-| 💬 คุยกับเจ้าหน้าที่           | `ต้องการคุยกับเจ้าหน้าที่โดยตรง`                          | S6    |
-| 🚨 อาการฉุกเฉิน               | `อาการแบบไหนที่ต้องรีบมาพบแพทย์ฉุกเฉิน? (ทุก Diagnosis)` | S1    |
-
-> The **menu bar/cell label** on your background image can be short and friendly; the **Text action
-> payload** must be the full question above. Shared items (`S1`…`S6`) work on every DX menu, so reuse
-> the handoff + emergency tiles across DX2–DX5.
->
-> Separately, urgent free-text from users (`เลือดออก`, `ปวดมาก`, `ไข้สูง`, `ตกขาวผิดปกติ`, `กลัวมาก`)
-> triggers the `escalation` reply regardless of the menu — see `escalation.keywords` in `faq_seed.yaml`.
-
----
-
-## Prerequisites
-
-- A LINE Official Account with the **Messaging API enabled** (the channel whose
-  `LINE_CHANNEL_SECRET` / `LINE_CHANNEL_TOKEN` you set in `.env`).
-- Admin access to **LINE Official Account Manager** → <https://manager.line.biz/>.
-- A rich menu **background image** prepared (see specs below).
-- The bot deployed and reachable so you can test taps end to end.
-
-### Background image specs
-
-| Item          | Value                                                         |
-| ------------- | ------------------------------------------------------------- |
-| Large size    | 2500 × 1686 px (recommended for a 6-tile 3×2 layout)          |
-| Compact size  | 2500 × 843 px (good for a 3-tile single row)                  |
-| Format        | JPEG or PNG                                                   |
-| Max file size | 1 MB                                                          |
-| Design notes  | Thai-readable, high contrast, one primary + one accent color  |
-
-Keep the 🚨 emergency tile visually distinct (e.g. red) and always visible, per the healthcare UX
-checklist in [line-ui-logo-guide.md](./line-ui-logo-guide.md).
-
----
-
-## Step-by-step in the LINE Console (Official Account Manager)
-
-### Step 1 — Open Rich Menus
-
-1. Go to <https://manager.line.biz/> and select your Official Account.
-2. Left sidebar → **Home** → **Rich menus** (เมนูริชเมนู).
-3. Click **Create** (สร้างใหม่).
-
-### Step 2 — Title and display settings
-
-1. **Title** (internal reference, not shown to users): `DX1 - NILM + hrHPV Other High Risk`.
-2. **Display period**: set a start date; leave end open (or per your campaign rules).
-3. **Menu bar text** (label on the collapsed bar): e.g. `เมนูช่วยเหลือ`.
-4. **Default behavior**: **Shown** so the menu opens by default.
-
-### Step 3 — Choose layout (template)
-
-1. Under **Content settings** → **Select a template**.
-2. Pick the **Large** template with **6 areas (3×2)** to fit the 6 tiles above, or **2×2 (4 areas)**
-   for core questions + handoff + emergency only.
-3. Click **Select**.
-
-### Step 4 — Upload the background image
-
-1. Click **Upload image** (or **Create a background image** in the built-in editor).
-2. Upload your PNG/JPEG (≤ 1 MB) sized for the chosen template.
-3. Confirm each cell lines up with your labels.
-
-### Step 5 — Set the action for each area (the critical part)
-
-For **every** area set **Action type = Text** (ข้อความ), then paste the **full question** from the
-table above. LINE sends that string as if the user typed it, and the webhook matches it against
-`match_phrases`.
-
-| Area | Action type | Text to enter                                            |
-| ---- | ----------- | -------------------------------------------------------- |
-| 1    | Text        | `ผล Pap ปกติ แต่ทำไมแพทย์บอกว่ามี HPV?`                   |
-| 2    | Text        | `ถ้า Pap ปกติ แล้ว HPV จะหายเองได้ไหม?`                   |
-| 3    | Text        | `ต้องมาตรวจซ้ำเมื่อไหร่ และตรวจอะไรบ้าง?`                 |
-| 4    | Text        | `ระหว่างรอตรวจซ้ำ ต้องระวังอะไรบ้าง?`                     |
-| 5    | Text        | `ต้องการคุยกับเจ้าหน้าที่โดยตรง`                           |
-| 6    | Text        | `อาการแบบไหนที่ต้องรีบมาพบแพทย์ฉุกเฉิน? (ทุก Diagnosis)`  |
-
-> ⚠️ Copy the question text **exactly** (including punctuation and the `(ทุก Diagnosis)` suffix on
-> shared items) so the substring match succeeds.
-
-### Step 6 — Swap in a different DX1 question
-
-Want a different tile? Any `D1-Q*` question in `faq_seed.yaml` works — just paste that item's full
-`question` value as the Text action. No code or config change needed (all items are already loaded).
-
-### Step 7 — Save and publish
-
-1. Click **Save** (บันทึก).
-2. Open the OA in the LINE app and tap each tile to confirm it returns the right answer (not the
-   fallback).
-
----
-
-## Step 8 — Get the rich menu ID and wire it into the repo
-
-The console does **not** display the rich menu ID, but the bot's per-user linking
-(`rich_menu_id` in `faq_seed.yaml`) needs it. Fetch it via the Messaging API.
-
-1. List rich menus on the channel (same token as `LINE_CHANNEL_TOKEN`):
-
+1. **Create rich menus via the Messaging API, not the OA Manager console.** LINE keeps them
+   separate: a console-created menu is *"retrievable and editable only through the Official Account
+   Manager"* and is invisible to the Messaging API, so its ID can never be used by `LinkUserRichMenu`.
+2. **`DB_PATH` must be set when running the server.** Saving the user's DX choice writes to SQLite
+   ([reply_usecase.go:45-49](../internal/usecase/reply_usecase.go#L45)); if `DB_PATH` is empty the bot
+   replies *"ระบบยังไม่พร้อมบันทึกผลตรวจ"* and the DX is never saved or linked. Run the schema first:
    ```bash
-   curl -s -X GET https://api.line.me/v2/bot/richmenu/list \
-     -H "Authorization: Bearer $LINE_CHANNEL_TOKEN" | jq .
+   ./scripts/migrate_db.sh data/users.db   # creates tables
+   # then run the server with DB_PATH=data/users.db
    ```
 
-   > Do not paste the token into chat, tickets, or shared logs — treat it as a secret.
-
-2. Find the entry whose `name`/`chatBarText` matches the DX1 menu and copy its `richMenuId`
-   (looks like `richmenu-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`).
-
-3. Paste it into [configs/faq_seed.yaml](../configs/faq_seed.yaml) under the `diagnoses` block:
-
-   ```yaml
-   diagnoses:
-     d1:
-       name: NILM + hrHPV Other High Risk Positive
-       rich_menu_id: "richmenu-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"   # DX1 menu
-   ```
-
-4. Redeploy. When a DX1 user is resolved, the handler links this menu to that user automatically.
+> **Clinical-safety note:** patients self-selecting a diagnosis group can pick the wrong one. Label
+> the default-menu buttons with the plain-language result the patient was given (and/or "ดูจากใบผล
+> ตรวจของคุณ"), keep the 🚨 emergency + 💬 staff options reachable, and have the clinical team approve
+> the labels.
 
 ---
 
-## Step 9 — Verify end to end
+## Console & channel settings (do these once)
 
-1. In the LINE app, open the OA chat as a DX1 test user.
-2. Confirm the DX1 rich menu shows.
-3. Tap each tile and confirm the bot returns the matching answer (not `fallback_reply`).
-4. Check the bot logs for `rich_menu_linked` (success) or `rich_menu_link_failed` (investigate
-   token/ID).
-5. Test on both Android and iOS LINE clients.
+**LINE Developers Console → your channel → Messaging API tab**
+
+| Setting | Value |
+| --- | --- |
+| Webhook URL | `https://<your-domain>/webhook` (then click **Verify**) |
+| Use webhook | **Enabled** |
+| Channel access token (long-lived) | issue → `LINE_CHANNEL_TOKEN` |
+| Channel secret (Basic settings) | → `LINE_CHANNEL_SECRET` |
+
+**LINE Official Account Manager → Settings → Response settings**
+
+| Setting | Value |
+| --- | --- |
+| Response mode | **Bot** |
+| Webhooks | **On** |
+| Auto-response messages | **Off** (so canned replies don't fight the bot) |
+| Greeting message | Optional — e.g. "กดเลือกกลุ่มผลตรวจของคุณจากเมนูด้านล่างค่ะ" |
+
+---
+
+## Prerequisites for the API calls
+
+```bash
+export LINE_CHANNEL_TOKEN="<long-lived channel access token>"   # secret — never paste into chat/tickets/logs
+```
+
+`curl` + `jq` installed. Two background images ready: `dx-select.png` and `dx1-richmenu.png`.
+
+### Image requirements
+
+| Item | Value |
+| --- | --- |
+| Recommended size | **2500 × 1686 px** (large, 3×2 grid) |
+| Width / height | 800–2500 px wide, ≥ 250 px tall, ratio width÷height ≥ 1.45 |
+| Format / size | JPEG or PNG, ≤ 1 MB |
+
+Tap-area `bounds` below assume a 2500 × 1686 canvas (cols at x=0/833/1666, rows at y=0/843).
+
+---
+
+## Part A — Default menu: DX self-selection
+
+### A1. Define `dx-select.json`
+
+Five DX buttons + a help tile. Each DX button sends `เลือก DXn` (the bot maps it to the diagnosis).
+
+```json
+{
+  "size": { "width": 2500, "height": 1686 },
+  "selected": true,
+  "name": "DX Selector (default)",
+  "chatBarText": "เลือกกลุ่มผลตรวจ",
+  "areas": [
+    { "bounds": { "x": 0,    "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "เลือก DX1" } },
+    { "bounds": { "x": 833,  "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "เลือก DX2" } },
+    { "bounds": { "x": 1666, "y": 0,   "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "เลือก DX3" } },
+    { "bounds": { "x": 0,    "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "เลือก DX4" } },
+    { "bounds": { "x": 833,  "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "เลือก DX5" } },
+    { "bounds": { "x": 1666, "y": 843, "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "ต้องการคุยกับเจ้าหน้าที่โดยตรง" } }
+  ]
+}
+```
+
+Label each cell on the artwork in plain Thai, e.g. DX1 = "Pap ปกติ · พบ HPV", DX2 = "LSIL จากแปป",
+DX3 = "CIN1 จากชิ้นเนื้อ", DX4 = "ASCUS · HPV ลบ", DX5 = "ผิดปกติ · ส่องกล้องปกติ".
+
+### A2. Create it, upload image, set as **default**
+
+```bash
+SELECT_ID=$(curl -s -X POST https://api.line.me/v2/bot/richmenu \
+  -H "Authorization: Bearer $LINE_CHANNEL_TOKEN" -H "Content-Type: application/json" \
+  -d @dx-select.json | jq -r .richMenuId)
+echo "$SELECT_ID"
+
+curl -s -X POST "https://api-data.line.me/v2/bot/richmenu/$SELECT_ID/content" \
+  -H "Authorization: Bearer $LINE_CHANNEL_TOKEN" -H "Content-Type: image/png" \
+  --data-binary @dx-select.png
+
+# Make it the account-wide default (shown until a user picks a DX)
+curl -s -X POST "https://api.line.me/v2/bot/user/all/richmenu/$SELECT_ID" \
+  -H "Authorization: Bearer $LINE_CHANNEL_TOKEN"
+```
+
+---
+
+## Part B — DX1 content menu (FAQ tiles)
+
+Each tap sends a **full question** — the matcher is a case-insensitive substring check against each
+FAQ's `match_phrases` (code + full question) in
+[configs/faq_seed.yaml](../configs/faq_seed.yaml). Use the full question (codes like `D1-Q1` collide
+with `D1-Q10`).
+
+| Cell | Label (short) | `message` text (full question) | FAQ |
+| --- | --- | --- | --- |
+| 1 | Pap ปกติ แต่ HPV บวก? | `ผล Pap ปกติ แต่ทำไมแพทย์บอกว่ามี HPV?` | D1-Q1 |
+| 2 | HPV หายเองได้ไหม? | `ถ้า Pap ปกติ แล้ว HPV จะหายเองได้ไหม?` | D1-Q3 |
+| 3 | ตรวจซ้ำเมื่อไหร่? | `ต้องมาตรวจซ้ำเมื่อไหร่ และตรวจอะไรบ้าง?` | D1-Q5 |
+| 4 | ระหว่างรอระวังอะไร? | `ระหว่างรอตรวจซ้ำ ต้องระวังอะไรบ้าง?` | D1-Q6 |
+| 5 | 💬 คุยกับเจ้าหน้าที่ | `ต้องการคุยกับเจ้าหน้าที่โดยตรง` | S6 |
+| 6 | 🚨 อาการฉุกเฉิน | `อาการแบบไหนที่ต้องรีบมาพบแพทย์ฉุกเฉิน? (ทุก Diagnosis)` | S1 |
+
+### B1. Define `dx1-richmenu.json`
+
+```json
+{
+  "size": { "width": 2500, "height": 1686 },
+  "selected": false,
+  "name": "DX1 - NILM + hrHPV Other High Risk",
+  "chatBarText": "เมนูช่วยเหลือ",
+  "areas": [
+    { "bounds": { "x": 0,    "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ผล Pap ปกติ แต่ทำไมแพทย์บอกว่ามี HPV?" } },
+    { "bounds": { "x": 833,  "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ถ้า Pap ปกติ แล้ว HPV จะหายเองได้ไหม?" } },
+    { "bounds": { "x": 1666, "y": 0,   "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "ต้องมาตรวจซ้ำเมื่อไหร่ และตรวจอะไรบ้าง?" } },
+    { "bounds": { "x": 0,    "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ระหว่างรอตรวจซ้ำ ต้องระวังอะไรบ้าง?" } },
+    { "bounds": { "x": 833,  "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ต้องการคุยกับเจ้าหน้าที่โดยตรง" } },
+    { "bounds": { "x": 1666, "y": 843, "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "อาการแบบไหนที่ต้องรีบมาพบแพทย์ฉุกเฉิน? (ทุก Diagnosis)" } }
+  ]
+}
+```
+
+### B2. Create it and upload its image
+
+```bash
+DX1_ID=$(curl -s -X POST https://api.line.me/v2/bot/richmenu \
+  -H "Authorization: Bearer $LINE_CHANNEL_TOKEN" -H "Content-Type: application/json" \
+  -d @dx1-richmenu.json | jq -r .richMenuId)
+echo "$DX1_ID"
+
+curl -s -X POST "https://api-data.line.me/v2/bot/richmenu/$DX1_ID/content" \
+  -H "Authorization: Bearer $LINE_CHANNEL_TOKEN" -H "Content-Type: image/png" \
+  --data-binary @dx1-richmenu.png
+```
+
+> Do **not** set this one as default — it's linked per user by the bot when they pick DX1.
+
+### B3. Wire the ID into the repo
+
+Paste `$DX1_ID` into [configs/faq_seed.yaml](../configs/faq_seed.yaml):
+
+```yaml
+diagnoses:
+  d1:
+    name: NILM + hrHPV Other High Risk Positive
+    rich_menu_id: "richmenu-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"   # = $DX1_ID
+```
+
+Redeploy with `DB_PATH` set.
+
+---
+
+## Verify the full flow
+
+1. As a fresh test user, open the OA → you should see the **DX selector** default menu.
+2. Tap **เลือก DX1** → bot replies "บันทึกกลุ่มผลตรวจเรียบร้อยค่ะ…" and the menu switches to the
+   **DX1** content menu (per-user link). Check logs for `rich_menu_linked`.
+3. Tap each DX1 cell → confirm the matching answer (not `fallback_reply`).
+4. Type an urgent word (`เลือดออก`, `ปวดมาก`, `ไข้สูง`) → confirm the escalation reply fires.
+5. Test on Android **and** iOS.
+
+**Switching DX later:** the per-user DX1 menu hides the default selector, so to change groups a user
+re-sends `เลือก DX2` (etc.) — consider noting this in the staff-handoff reply, or unlink with
+`DELETE /v2/bot/user/{userId}/richmenu` to show the selector again.
 
 ---
 
 ## Repeat for DX2–DX5
 
-Each DX has its own `rich_menu_id: ""` placeholder in the `diagnoses` block of `faq_seed.yaml`.
-Repeat steps 1–8 per diagnosis, mapping tiles to that DX's question text (e.g. DX2 uses `D2-Q*`
-questions). Reuse the same shared tiles (`ต้องการคุยกับเจ้าหน้าที่โดยตรง`,
-`อาการแบบไหนที่ต้องรีบมาพบแพทย์ฉุกเฉิน? (ทุก Diagnosis)`) on every menu.
+Duplicate `dx1-richmenu.json`, swap `name`, `chatBarText`, and the four DX-specific questions
+(DX2 → `D2-Q*`, etc.), keep cells 5–6, run B2–B3 for each, and paste every ID into the matching
+`diagnoses.dX.rich_menu_id`. The default selector (Part A) is created only once.
+
+## Managing rich menus
+
+```bash
+# List Messaging-API rich menus (console-created ones never appear here)
+curl -s https://api.line.me/v2/bot/richmenu/list \
+  -H "Authorization: Bearer $LINE_CHANNEL_TOKEN" | jq '.richmenus[] | {richMenuId, name}'
+
+# Delete by ID
+curl -s -X DELETE "https://api.line.me/v2/bot/richmenu/$DX1_ID" \
+  -H "Authorization: Bearer $LINE_CHANNEL_TOKEN"
+```
 
 ## Governance reminders
 
-- Do not embed patient data in menu artwork or labels.
-- Keep a staff-handoff and emergency option on every menu (healthcare UX requirement).
-- Have the clinical team review all Thai copy before publishing.
+- No patient data in menu artwork or labels.
+- Keep staff-handoff + emergency options on every menu.
+- Clinical team reviews all Thai copy and DX-selector labels before publishing.
+
+---
+
+Sources:
+- [Use rich menus — LINE Developers](https://developers.line.biz/en/docs/messaging-api/using-rich-menus/)
+- [Use per-user rich menus — LINE Developers](https://developers.line.biz/en/docs/messaging-api/use-per-user-rich-menus/)
+- [Rich menus overview — LINE Developers](https://developers.line.biz/en/docs/messaging-api/rich-menus-overview/)
