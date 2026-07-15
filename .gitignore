@@ -13,3 +13,6 @@ server
 
 # OS / editor
 .DS_Store
+
+# generated rich-menu preview HTML
+deploy/richmenus/preview/
