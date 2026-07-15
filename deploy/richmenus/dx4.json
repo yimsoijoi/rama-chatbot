@@ -1,0 +1,20 @@
+{
+  "size": { "width": 2500, "height": 1686 },
+  "selected": false,
+  "name": "DX4 - ASCUS HPV negative",
+  "chatBarText": "เมนูช่วยเหลือ",
+  "areas": [
+    { "bounds": { "x": 0,    "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ASCUS คืออะไร น่ากังวลไหม?" } },
+    { "bounds": { "x": 833,  "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ถ้า HPV ลบและเป็น ASCUS โอกาสเป็นมะเร็งมีแค่ไหน?" } },
+    { "bounds": { "x": 1666, "y": 0,   "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "ASCUS HPV negative หายเองได้ไหม?" } },
+    { "bounds": { "x": 0,    "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ต้องมาตรวจซ้ำเมื่อไหร่? ตรวจ Pap อีกครั้งหรือเปล่า?" } },
+    { "bounds": { "x": 833,  "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ต้องการคุยกับเจ้าหน้าที่โดยตรง" } },
+    { "bounds": { "x": 1666, "y": 843, "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "อาการแบบไหนที่ต้องรีบมาพบแพทย์ฉุกเฉิน? (ทุก Diagnosis)" } }
+  ]
+}

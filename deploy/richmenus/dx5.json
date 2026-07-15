@@ -1,0 +1,20 @@
+{
+  "size": { "width": 2500, "height": 1686 },
+  "selected": false,
+  "name": "DX5 - Low-grade + Colposcopy normal",
+  "chatBarText": "เมนูช่วยเหลือ",
+  "areas": [
+    { "bounds": { "x": 0,    "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ทำไมแพทย์ไม่ตัดชิ้นเนื้อทั้งๆ ที่ Pap ผิดปกติ?" } },
+    { "bounds": { "x": 833,  "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ถ้า Colposcopy ปกติ หมายความว่าไม่มีรอยโรคจริงๆ ใช่ไหม?" } },
+    { "bounds": { "x": 1666, "y": 0,   "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "มีโอกาสไหมที่ Colposcopy จะพลาด แล้วมีรอยโรคอยู่จริงๆ?" } },
+    { "bounds": { "x": 0,    "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ต้องมาตรวจซ้ำเมื่อไหร่? ตรวจ Pap หรือ Colposcopy อีกครั้ง?" } },
+    { "bounds": { "x": 833,  "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ต้องการคุยกับเจ้าหน้าที่โดยตรง" } },
+    { "bounds": { "x": 1666, "y": 843, "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "อาการแบบไหนที่ต้องรีบมาพบแพทย์ฉุกเฉิน? (ทุก Diagnosis)" } }
+  ]
+}

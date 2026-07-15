@@ -1,0 +1,20 @@
+{
+  "size": { "width": 2500, "height": 1686 },
+  "selected": false,
+  "name": "DX2 - LSIL cytology",
+  "chatBarText": "เมนูช่วยเหลือ",
+  "areas": [
+    { "bounds": { "x": 0,    "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "LSIL คืออะไร หมายความว่าฉันกำลังจะเป็นมะเร็งไหม?" } },
+    { "bounds": { "x": 833,  "y": 0,   "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "LSIL มีโอกาสหายเองได้มากแค่ไหน?" } },
+    { "bounds": { "x": 1666, "y": 0,   "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "การตรวจ Colposcopy คืออะไร เจ็บไหม?" } },
+    { "bounds": { "x": 0,    "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ต้องมาตรวจซ้ำเมื่อไหร่ และต้องตรวจอะไรบ้าง?" } },
+    { "bounds": { "x": 833,  "y": 843, "width": 833, "height": 843 },
+      "action": { "type": "message", "text": "ต้องการคุยกับเจ้าหน้าที่โดยตรง" } },
+    { "bounds": { "x": 1666, "y": 843, "width": 834, "height": 843 },
+      "action": { "type": "message", "text": "อาการแบบไหนที่ต้องรีบมาพบแพทย์ฉุกเฉิน? (ทุก Diagnosis)" } }
+  ]
+}
