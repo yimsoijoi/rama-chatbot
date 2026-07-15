@@ -1,0 +1,15 @@
+# Secrets — never commit real env files
+.env
+.env.local
+.env.prod
+
+# SQLite databases
+data/*.db
+*.db
+
+# Build output
+/out/
+server
+
+# OS / editor
+.DS_Store
