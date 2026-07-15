@@ -9,6 +9,10 @@ services:
     restart: unless-stopped
     expose:
       - "8080"
+    volumes:
+      # Persist the SQLite DB (user→diagnosis mapping) across restarts/redeploys.
+      # DB_PATH in .env.prod must point inside this dir (e.g. /app/data/users.db).
+      - chatbot_data:/app/data
 
   caddy:
     image: caddy:2.9-alpine
@@ -27,3 +31,4 @@ services:
 volumes:
   caddy_data:
   caddy_config:
+  chatbot_data:
