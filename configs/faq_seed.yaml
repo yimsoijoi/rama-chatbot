@@ -10,19 +10,19 @@ user_diagnosis:
 diagnoses:
   d1:
     name: NILM + hrHPV Other High Risk Positive
-    rich_menu_id: ""   # paste richmenu-xxx from LINE Console after creating DX1 rich menu
+    rich_menu_id: "richmenu-8a27d34b1e3f1e096c437a05eb5c46b8"   # paste richmenu-xxx from LINE Console after creating DX1 rich menu
   d2:
     name: LSIL จาก Cytology
-    rich_menu_id: ""   # paste richmenu-xxx for DX2
+    rich_menu_id: "richmenu-6b8a78b8b03618e133007a0bdf66f70b"   # paste richmenu-xxx for DX2
   d3:
     name: LSIL จาก Biopsy (CIN1)
-    rich_menu_id: ""   # paste richmenu-xxx for DX3
+    rich_menu_id: "richmenu-89262dd9ee555c32f3a59e6e1ba8fff7"   # paste richmenu-xxx for DX3
   d4:
     name: ASCUS + HPV Negative
-    rich_menu_id: ""   # paste richmenu-xxx for DX4
+    rich_menu_id: "richmenu-60823fda8119c5b07d16f6b8c79c96ed"   # paste richmenu-xxx for DX4
   d5:
     name: Low-grade + Colposcopy ปกติ
-    rich_menu_id: ""   # paste richmenu-xxx for DX5
+    rich_menu_id: "richmenu-8ef877c2659d2ed92472f7c484d2f3b2"   # paste richmenu-xxx for DX5
 
 escalation:
   keywords:
