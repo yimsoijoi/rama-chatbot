@@ -11,6 +11,9 @@ if [ ! -f "$ENV_FILE" ]; then
   exit 1
 fi
 
+# Tighten permissions on the secrets file (owner read/write only).
+chmod 600 "$ENV_FILE" 2>/dev/null || true
+
 if [ ! -f "$COMPOSE_FILE" ]; then
   echo "Missing ${COMPOSE_FILE} in current directory"
   exit 1

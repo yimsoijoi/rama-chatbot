@@ -142,9 +142,10 @@ Set at least:
 - `LINE_CHANNEL_SECRET`
 - `LINE_CHANNEL_TOKEN`
 - `IMAGE_REGISTRY=ghcr.io`
-- `IMAGE_REPOSITORY=owner/obgynrama-chatbot`
+- `IMAGE_REPOSITORY=yimsoijoi/rama-chatbot`
 - `IMAGE_TAG=latest`
 - `DOMAIN=your-domain.com`
+- `DB_PATH=/app/data/users.db`  ← required, or the DX-selection flow can't save the user's choice
 - `ENABLE_PPROF=false`
 
 ### Step 8: Login to container registry (if private image)
@@ -157,8 +158,12 @@ docker login ghcr.io
 
 ```bash
 chmod +x scripts/deploy_with_rollback.sh
-IMAGE_REGISTRY=ghcr.io IMAGE_REPOSITORY=owner/obgynrama-chatbot ./scripts/deploy_with_rollback.sh latest
+IMAGE_REGISTRY=ghcr.io IMAGE_REPOSITORY=yimsoijoi/rama-chatbot ./scripts/deploy_with_rollback.sh latest
 ```
+
+> Note: the image `ghcr.io/yimsoijoi/rama-chatbot:latest` only exists **after** the GitHub
+> Actions CI has built it (it runs on every push to `main`). Check the **Actions** tab on GitHub
+> shows a green build before running this, or the `docker pull` will fail.
 
 ### Step 10: Configure LINE webhook
 
@@ -180,7 +185,7 @@ curl -I https://your-domain.com/metrics
 If a new version fails, run previous tag:
 
 ```bash
-IMAGE_REGISTRY=ghcr.io IMAGE_REPOSITORY=owner/obgynrama-chatbot ./scripts/deploy_with_rollback.sh PREVIOUS_TAG
+IMAGE_REGISTRY=ghcr.io IMAGE_REPOSITORY=yimsoijoi/rama-chatbot ./scripts/deploy_with_rollback.sh PREVIOUS_TAG
 ```
 
 The script also attempts automatic rollback if health check fails.

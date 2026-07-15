@@ -7,8 +7,11 @@ services:
     env_file:
       - .env.prod
     restart: unless-stopped
-    expose:
-      - "8080"
+    # Bind to the server's localhost only (NOT 0.0.0.0), so /metrics and
+    # /debug/pprof are reachable via an SSH tunnel but never from the internet.
+    # Public traffic still comes through Caddy on 80/443.
+    ports:
+      - "127.0.0.1:8080:8080"
     volumes:
       # Persist the SQLite DB (user→diagnosis mapping) across restarts/redeploys.
       # DB_PATH in .env.prod must point inside this dir (e.g. /app/data/users.db).

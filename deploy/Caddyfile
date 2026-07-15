@@ -7,5 +7,10 @@
         Referrer-Policy "no-referrer"
     }
 
+    # Internal-only endpoints must never be reachable from the public internet.
+    # Access them via an SSH tunnel to the server's localhost:8080 instead.
+    @internal path /metrics /metrics/* /debug/pprof /debug/pprof/*
+    respond @internal 404
+
     reverse_proxy obgynrama-chatbot:8080
 }

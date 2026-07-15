@@ -26,7 +26,7 @@ cp .env.example .env
 2. Export environment variables
 
 ```bash
-export $(cat .env | xargs)
+set -a && source .env && set +a
 ```
 
 3. Install dependencies and run
