@@ -19,7 +19,12 @@ apt-get install -y ca-certificates curl git
 
 echo "==> Installing Docker (+ compose plugin)..."
 if ! command -v docker >/dev/null 2>&1; then
-  curl -fsSL https://get.docker.com | sh
+  curl -fsSL https://get.docker.com | sh || true
+fi
+if ! command -v docker >/dev/null 2>&1; then
+  echo "    get.docker.com unavailable for this Ubuntu; using distro packages..."
+  apt-get install -y docker.io docker-compose-v2
+  systemctl enable --now docker
 fi
 docker --version
 docker compose version || true
