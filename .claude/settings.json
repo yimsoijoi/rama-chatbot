@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git check-ignore *)",
+      "Bash(xargs -I{} echo {})",
+      "Bash(go test *)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'docs: add bot.ppakzv.com deploy runbook \\(OVH + Cloudflare\\) *)",
+      "Bash(git push *)"
+    ],
+    "additionalDirectories": [
+      "/tmp"
+    ]
+  }
+}

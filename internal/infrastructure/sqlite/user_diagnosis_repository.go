@@ -127,23 +127,44 @@ func (r *UserDiagnosisRepo) FindFAQByDiagnosisAndText(diagnosis, userText string
 	}
 	defer rows.Close()
 
-	needle := normalize(userText)
+	type faqRow struct {
+		faqKey, question, answer, quickReplies, matchPhrases string
+	}
+	var candidates []faqRow
 	for rows.Next() {
 		var rowDiagnosis, faqKey, question, answer, quickReplies, matchPhrases string
 		if err := rows.Scan(&rowDiagnosis, &faqKey, &question, &answer, &quickReplies, &matchPhrases); err != nil {
 			return entity.FAQ{}, false, fmt.Errorf("FindFAQByDiagnosisAndText scan: %w", err)
 		}
-
-		if matchFAQRow(faqKey, question, matchPhrases, needle) {
-			return entity.FAQ{
-				Answer:       answer,
-				QuickReply:   splitLines(quickReplies),
-				MatchPhrases: splitLines(matchPhrases),
-			}, true, nil
-		}
+		candidates = append(candidates, faqRow{faqKey, question, answer, quickReplies, matchPhrases})
 	}
 	if err := rows.Err(); err != nil {
 		return entity.FAQ{}, false, fmt.Errorf("FindFAQByDiagnosisAndText rows: %w", err)
+	}
+
+	needle := normalize(userText)
+
+	// Prefer an exact match over substring containment. Without this, a code
+	// that's a textual prefix of another (e.g. "D3-Q1" inside "D3-Q10") could
+	// shadow the item the user actually asked for, depending purely on which
+	// row SQLite happened to scan first.
+	for _, c := range candidates {
+		if matchFAQRowExact(c.faqKey, c.question, c.matchPhrases, needle) {
+			return entity.FAQ{
+				Answer:       c.answer,
+				QuickReply:   splitLines(c.quickReplies),
+				MatchPhrases: splitLines(c.matchPhrases),
+			}, true, nil
+		}
+	}
+	for _, c := range candidates {
+		if matchFAQRow(c.faqKey, c.question, c.matchPhrases, needle) {
+			return entity.FAQ{
+				Answer:       c.answer,
+				QuickReply:   splitLines(c.quickReplies),
+				MatchPhrases: splitLines(c.matchPhrases),
+			}, true, nil
+		}
 	}
 
 	return entity.FAQ{}, false, nil
@@ -202,6 +223,25 @@ func (r *UserDiagnosisRepo) ListQuestionsByCategory(diagnosis, category string) 
 		return nil, fmt.Errorf("ListQuestionsByCategory rows: %w", err)
 	}
 	return out, nil
+}
+
+// matchFAQRowExact reports whether needle is exactly (post-normalization)
+// the FAQ's key, question, or one of its match phrases. Checked before
+// matchFAQRow's substring search so an exact code/phrase always wins over a
+// shorter code that merely happens to be a textual prefix of it.
+func matchFAQRowExact(faqKey, question, phrases, needle string) bool {
+	if normalize(faqKey) == needle {
+		return true
+	}
+	if normalize(question) == needle {
+		return true
+	}
+	for _, p := range splitLines(phrases) {
+		if normalize(p) == needle {
+			return true
+		}
+	}
+	return false
 }
 
 func matchFAQRow(faqKey, question, phrases, needle string) bool {

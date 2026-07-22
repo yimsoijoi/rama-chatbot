@@ -84,6 +84,21 @@ func (r *KnowledgeRepo) DiagnosisCodes() []string {
 }
 
 func matchFAQ(items map[string]entity.FAQ, text string) (entity.FAQ, bool) {
+	// Prefer an exact match over substring containment. Without this, a code
+	// that's a textual prefix of another (e.g. "D3-Q1" inside "D3-Q10") could
+	// shadow the item the user actually asked for, depending purely on Go's
+	// randomized map iteration order.
+	for key, faq := range items {
+		if normalize(key) == text {
+			return faq, true
+		}
+		for _, phrase := range faq.MatchPhrases {
+			if normalize(phrase) == text {
+				return faq, true
+			}
+		}
+	}
+
 	for key, faq := range items {
 		if strings.Contains(text, normalize(key)) {
 			return faq, true
