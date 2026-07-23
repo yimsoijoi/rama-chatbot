@@ -18,7 +18,6 @@ RUN apk add --no-cache ca-certificates tzdata && adduser -D -g '' appuser
 
 COPY --from=builder /out/server /app/server
 COPY --chown=appuser:appuser configs /app/configs
-COPY --chown=appuser:appuser .env.example /app/.env.example
 
 # Writable data dir for the SQLite DB (user→diagnosis mapping). Owned by
 # appuser so the non-root process can create/write the DB when a volume is
