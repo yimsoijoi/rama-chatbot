@@ -45,7 +45,7 @@ func (u *ReplyUsecase) debug(msg, userText string, args ...any) {
 
 type ReplyResult struct {
 	Message    string
-	RichMenuID string // non-empty = link this rich menu to the user
+	RichMenuID string // non-empty = (re)link this rich menu to the user
 	QuickReply []string
 }
 
@@ -62,6 +62,16 @@ func NewReplyUsecaseWithRepos(repo repository.KnowledgeRepository, userRepo repo
 }
 
 func (u *ReplyUsecase) BuildReply(userID, userText string) ReplyResult {
+	// "กลับหน้าหลัก" re-shows the user's current diagnosis rich menu (re-links
+	// the same menu; does not change or clear their diagnosis).
+	if isHomeCommand(userText) {
+		dx := u.resolveDiagnosis(userID)
+		return ReplyResult{
+			Message:    "เลือกคำถามที่ต้องการจากเมนูด้านล่างได้เลยค่ะ",
+			RichMenuID: u.repo.RichMenuID(dx),
+		}
+	}
+
 	if dx, ok := parseDiagnosisSelection(userText); ok {
 		if !u.repo.IsDiagnosis(dx) {
 			return ReplyResult{Message: "ไม่พบกลุ่มผลตรวจที่เลือกค่ะ กรุณาเลือกใหม่"}
@@ -219,6 +229,11 @@ func parseDiagnosisSelection(text string) (string, bool) {
 	default:
 		return "", false
 	}
+}
+
+func isHomeCommand(text string) bool {
+	t := strings.ToLower(strings.TrimSpace(text))
+	return t == "กลับหน้าหลัก" || t == "หน้าหลัก"
 }
 
 func isSubmenuCommand(text string) bool {
