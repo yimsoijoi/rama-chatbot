@@ -148,7 +148,65 @@ func buildBotConfig(seed seedFile) *entity.BotConfig {
 	}
 
 	addQuickReplyAliases(cfg, seed.Items)
+	applyExplicitAliases(cfg)
 	return cfg
+}
+
+// explicitQuickReplyAliases maps a quick-reply chip text to the FAQ code it
+// should answer, for chips whose wording differs too much from the question
+// for automatic matching. AI-DRAFT — the clinical team should review each pair.
+// Pure navigation chips ("มีคำถามอื่นอีกไหม?", "กลับหน้าหลัก") are intentionally
+// omitted: they fall back to the "type a question or use the menu" reply.
+var explicitQuickReplyAliases = map[string]string{
+	// DX1
+	"HPV หายเองได้ไหม?":          "D1-Q3",
+	"ทำไมไม่รักษา?":               "D1-Q4",
+	"ระหว่างรอต้องระวังอะไร?":     "D1-Q6",
+	"ลูกสาวควรฉีดวัคซีนไหม?":      "D1-Q9",
+	// DX2
+	"Colposcopy เจ็บไหม?":              "D2-Q5",
+	"ถ้าไม่หาย จะกลายเป็นมะเร็งกี่ปี?": "D2-Q4",
+	"ทำไมไม่รักษาทันที?":               "D2-Q2",
+	"เตรียมตัวก่อนมาตรวจอย่างไร?":      "D2-Q6",
+	// DX3
+	"ถ้าไม่หายแพทย์จะรักษาอย่างไร?": "D3-Q9",
+	"ทำไมไม่ต้องรักษา?":             "D3-Q3",
+	"มีอะไรช่วยให้หายเร็วขึ้นไหม?":  "D3-Q10",
+	"อาการที่ต้องรีบพบแพทย์":        "D3-Q11",
+	// DX4
+	"HPV ลบ แต่ยังผิดปกติ เกิดจากอะไร?": "D4-Q2",
+	"ฉีดวัคซีน HPV ตอนนี้ยังได้ไหม?":    "S2",
+	"ยังต้องระวัง HPV ไหม?":             "D4-Q9",
+	// DX5
+	"Colposcopy ปกติหมายความว่าอะไร?": "D5-Q4",
+	"ตรวจหลายครั้งแล้ว ต้องมาอีกไหม?":  "D5-Q9",
+	"ทำไมไม่ตัดชิ้นเนื้อ?":            "D5-Q2",
+	"มีโอกาส Colposcopy พลาดไหม?":     "D5-Q5",
+	"มีโอกาสพลาดไหม?":                 "D5-Q5",
+	"รอยโรคในตำแหน่งที่มองไม่เห็น?":    "D5-Q6",
+	// Shared
+	"บอกคู่รักดีไหม?":      "S4",
+	"มีเพศสัมพันธ์ได้ไหม?": "S3",
+	"เลื่อนนัด":            "S5",
+	"ติดต่อเจ้าหน้าที่":    "S6",
+}
+
+func applyExplicitAliases(cfg *entity.BotConfig) {
+	for phrase, code := range explicitQuickReplyAliases {
+		addMatchPhrase(cfg, dxForCode(code), code, phrase)
+	}
+}
+
+// dxForCode derives the diagnosis key from a FAQ code (e.g. "D2-Q4" -> "d2",
+// "S6" -> "shared").
+func dxForCode(code string) string {
+	if strings.HasPrefix(code, "S") {
+		return sharedDX
+	}
+	if len(code) >= 2 && code[0] == 'D' {
+		return "d" + string(code[1])
+	}
+	return ""
 }
 
 // addQuickReplyAliases makes suggested quick-reply chips answerable. A chip's
