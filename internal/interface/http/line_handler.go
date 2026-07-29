@@ -125,7 +125,10 @@ func (h *LineHandler) Webhook(w http.ResponseWriter, r *http.Request) {
 				if i >= 13 {
 					break // LINE quick reply max is 13 items
 				}
-				items = append(items, linebot.NewQuickReplyButton("", linebot.NewMessageAction(q, q)))
+				// LINE rejects the whole reply if a quick-reply label exceeds 20
+				// characters. Truncate the visible label but keep the full text as
+				// the action payload so matching is unaffected.
+				items = append(items, linebot.NewQuickReplyButton("", linebot.NewMessageAction(truncateLabel(q, 20), q)))
 			}
 			if len(items) > 0 {
 				replyMsg.WithQuickReplies(linebot.NewQuickReplyItems(items...))
@@ -180,6 +183,19 @@ func (h *LineHandler) Webhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+// truncateLabel shortens s to at most max characters (counted as runes, since
+// Thai text is multi-byte), appending an ellipsis when it has to cut.
+func truncateLabel(s string, max int) string {
+	r := []rune(s)
+	if len(r) <= max {
+		return s
+	}
+	if max <= 1 {
+		return string(r[:max])
+	}
+	return string(r[:max-1]) + "…"
 }
 
 type noOpDeduplicator struct{}
