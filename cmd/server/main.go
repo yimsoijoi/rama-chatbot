@@ -55,7 +55,10 @@ func main() {
 		}
 		defer sqliteRepo.Close()
 		userDiagRepo = sqliteRepo
-		faqRepo = sqliteRepo
+		// FAQ answers come from the in-memory config (faq_seed.yaml), loaded
+		// fresh at startup — always matches the deployed config, no seeding.
+		// SQLite is used only to persist the user->diagnosis mapping.
+		// (faqRepo stays nil on purpose.)
 		logger.Info("startup_sqlite_ready", "db_path", dbPath)
 	} else {
 		logger.Info("startup_sqlite_skipped", "reason", "DB_PATH not set; user diagnosis will not be persisted")
