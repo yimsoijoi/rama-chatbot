@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"log/slog"
+	"os"
 	"strings"
 	"sync"
 
@@ -14,6 +16,23 @@ type ReplyUsecase struct {
 	faqRepo  repository.FAQRepository
 	mu       sync.RWMutex
 	cache    map[string]string
+	logger   *slog.Logger
+}
+
+// SetLogger enables diagnostic logging for reply resolution.
+func (u *ReplyUsecase) SetLogger(l *slog.Logger) { u.logger = l }
+
+// debug logs a reply-resolution decision. The raw user text is included only
+// when DEBUG_LOG_TEXT=true (it may contain PII), otherwise just its length.
+func (u *ReplyUsecase) debug(msg, userText string, args ...any) {
+	if u.logger == nil {
+		return
+	}
+	base := []any{slog.Int("text_len", len(userText))}
+	if os.Getenv("DEBUG_LOG_TEXT") == "true" {
+		base = append(base, slog.String("text", userText))
+	}
+	u.logger.Info(msg, append(base, args...)...)
 }
 
 type ReplyResult struct {
@@ -65,6 +84,7 @@ func (u *ReplyUsecase) BuildReply(userID, userText string) ReplyResult {
 	}
 
 	dx := u.resolveDiagnosis(userID)
+	u.debug("reply_resolved", userText, slog.String("dx", dx), slog.Bool("faq_repo_active", u.faqRepo != nil))
 	if u.faqRepo != nil {
 		if isSubmenuCommand(userText) {
 			cats, err := u.faqRepo.ListCategories(dx)
@@ -93,6 +113,7 @@ func (u *ReplyUsecase) BuildReply(userID, userText string) ReplyResult {
 	}
 
 	faq, ok := u.repo.FindFAQ(dx, userText)
+	u.debug("reply_config_lookup", userText, slog.String("dx", dx), slog.Bool("matched", ok))
 	if !ok {
 		return ReplyResult{Message: u.repo.FallbackReply() + "\n\nหากต้องการเลือกกลุ่มผลตรวจใหม่ พิมพ์: เลือก DX1, DX2, DX3, DX4 หรือ DX5"}
 	}

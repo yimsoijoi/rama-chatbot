@@ -65,6 +65,7 @@ func main() {
 	}
 
 	uc := usecase.NewReplyUsecaseWithRepos(repo, userDiagRepo, faqRepo)
+	uc.SetLogger(logger)
 	dedup := observability.NewInMemoryEventDedupCache(dedupTTL)
 	h := httpHandler.NewLineHandlerWithDedup(bot, uc, logger, dedup)
 
