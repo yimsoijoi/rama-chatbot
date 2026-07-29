@@ -11,9 +11,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "preview")
 os.makedirs(OUT, exist_ok=True)
 
-# DX accent colors (dark enough for white text — AA large)
-TEAL, BLUE, PURPLE, GREEN, AMBER = "#0E7490", "#1D4ED8", "#6D28D9", "#047857", "#B45309"
-NAVY, RED = "#0D2B55", "#B91C1C"
+# Pastel palette — soft backgrounds with dark text (see TEXT below) for contrast.
+TEAL, BLUE, PURPLE, GREEN, AMBER = "#A8E6DC", "#B3D4F5", "#D8C9F0", "#C3E8C9", "#FBD9A8"
+NAVY, RED = "#C9D0EC", "#F5B0B0" # staff = soft periwinkle, emergency = soft coral
+TEXT = "#26364F"                 # dark slate text, readable on all pastels
+GAP = "#EEF2F7"                  # light gap between cells
 
 STAFF = ("💬", "คุยกับเจ้าหน้าที่", NAVY)
 EMERG = ("🚨", "อาการฉุกเฉิน", RED)
@@ -71,14 +73,13 @@ PAGE = """<!doctype html><html lang="th"><head><meta charset="utf-8"><style>
   * {{ margin:0; padding:0; box-sizing:border-box; }}
   html,body {{ width:2500px; height:1686px; }}
   body {{ font-family:"Sarabun","Noto Sans Thai","Thonburi",sans-serif;
-          background:#0b1f3a; display:grid;
+          background:{gap}; display:grid;
           grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr);
-          gap:10px; padding:10px; }}
+          gap:14px; padding:14px; }}
   .cell {{ display:flex; flex-direction:column; align-items:center; justify-content:center;
-           text-align:center; color:#fff; padding:40px; gap:28px; }}
+           text-align:center; color:{text}; padding:40px; gap:28px; border-radius:28px; }}
   .ico {{ font-size:230px; line-height:1; }}
-  .lbl {{ font-size:76px; font-weight:700; line-height:1.25; max-width:92%;
-          text-shadow:0 2px 6px rgba(0,0,0,.25); }}
+  .lbl {{ font-size:76px; font-weight:700; line-height:1.25; max-width:92%; }}
 </style></head><body>
 {cells}
 </body></html>"""
@@ -87,7 +88,7 @@ for name, spec in MENUS.items():
     cells_html = "\n".join(
         CELL.format(icon=i, label=l, color=c) for (i, l, c) in spec["cells"]
     )
-    html = PAGE.format(cells=cells_html)
+    html = PAGE.format(cells=cells_html, gap=GAP, text=TEXT)
     with open(os.path.join(OUT, name + ".html"), "w", encoding="utf-8") as f:
         f.write(html)
     print("wrote", name + ".html")
