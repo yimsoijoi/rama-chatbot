@@ -15,22 +15,29 @@ type ReplyUsecase struct {
 	repo     repository.KnowledgeRepository
 	userRepo repository.UserDiagnosisRepository
 	faqRepo  repository.FAQRepository
-	mu       sync.RWMutex
-	cache    map[string]string
-	logger   *slog.Logger
+	mu           sync.RWMutex
+	cache        map[string]string
+	logger       *slog.Logger
+	debugEnabled bool
+	debugText    bool
 }
 
-// SetLogger enables diagnostic logging for reply resolution.
-func (u *ReplyUsecase) SetLogger(l *slog.Logger) { u.logger = l }
+// SetLogger wires the logger and reads the debug env flags once. Reply-
+// resolution logging is OFF unless DEBUG_REPLY=true (keeps prod logs clean and
+// avoids any per-message logging). DEBUG_LOG_TEXT=true additionally includes the
+// raw user text (may contain PII) — for short-lived debugging only.
+func (u *ReplyUsecase) SetLogger(l *slog.Logger) {
+	u.logger = l
+	u.debugEnabled = os.Getenv("DEBUG_REPLY") == "true"
+	u.debugText = os.Getenv("DEBUG_LOG_TEXT") == "true"
+}
 
-// debug logs a reply-resolution decision. The raw user text is included only
-// when DEBUG_LOG_TEXT=true (it may contain PII), otherwise just its length.
 func (u *ReplyUsecase) debug(msg, userText string, args ...any) {
-	if u.logger == nil {
+	if u.logger == nil || !u.debugEnabled {
 		return
 	}
 	base := []any{slog.Int("text_len", len(userText))}
-	if os.Getenv("DEBUG_LOG_TEXT") == "true" {
+	if u.debugText {
 		base = append(base, slog.String("text", userText))
 	}
 	u.logger.Info(msg, append(base, args...)...)
