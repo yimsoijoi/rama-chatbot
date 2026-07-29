@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# Create all rich menus via the LINE Messaging API, upload their images,
+# Create/replace all rich menus via the LINE Messaging API, upload their images,
 # set the DX selector as the account default, and write the returned IDs
 # into configs/faq_seed.yaml.
+#
+# Safe to re-run: any existing menu with the same name is deleted first, so you
+# won't accumulate duplicates when updating artwork. Note: replacing a menu
+# gives it a NEW id, so users who had the old per-user menu revert to the
+# default selector until they pick their DX again.
 #
 # Prereqs:
 #   - export LINE_CHANNEL_TOKEN="<long-lived channel access token>"
@@ -24,8 +29,22 @@ img_for() { # base -> path of first existing image, or empty
   echo ""
 }
 
-create() { # json image -> echoes richMenuId
+name_of() { python3 -c "import sys,json; print(json.load(open(sys.argv[1]))['name'])" "$1"; }
+
+delete_by_name() { # name -> delete every existing rich menu with that exact name
+  local name="$1" id
+  curl -sS "$API/v2/bot/richmenu/list" -H "Authorization: Bearer $LINE_CHANNEL_TOKEN" \
+    | python3 -c "import sys,json;[print(m['richMenuId']) for m in json.load(sys.stdin).get('richmenus',[]) if m.get('name')==sys.argv[1]]" "$name" \
+    | while read -r id; do
+        [ -n "$id" ] || continue
+        curl -sS -X DELETE "$API/v2/bot/richmenu/$id" -H "Authorization: Bearer $LINE_CHANNEL_TOKEN" >/dev/null
+        echo "  removed old menu with same name: $id"
+      done
+}
+
+create() { # json image -> echoes richMenuId (replaces any menu of the same name)
   local json="$1" img="$2" id
+  delete_by_name "$(name_of "$json")"
   id=$(curl -sS -X POST "$API/v2/bot/richmenu" \
         -H "Authorization: Bearer $LINE_CHANNEL_TOKEN" \
         -H "Content-Type: application/json" \
