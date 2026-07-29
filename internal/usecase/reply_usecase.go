@@ -123,7 +123,7 @@ func (u *ReplyUsecase) BuildReply(userID, userText string) ReplyResult {
 	faq, ok := u.repo.FindFAQ(dx, userText)
 	u.debug("reply_config_lookup", userText, slog.String("dx", dx), slog.Bool("matched", ok))
 	if !ok {
-		return ReplyResult{Message: u.repo.FallbackReply() + "\n\nหากต้องการเลือกกลุ่มผลตรวจใหม่ พิมพ์: เลือก DX1, DX2, DX3, DX4 หรือ DX5"}
+		return ReplyResult{Message: u.repo.FallbackReply()}
 	}
 
 	return buildReplyFromFAQ(faq)
