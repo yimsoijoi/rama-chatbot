@@ -63,9 +63,14 @@ func NewReplyUsecaseWithRepos(repo repository.KnowledgeRepository, userRepo repo
 
 func (u *ReplyUsecase) BuildReply(userID, userText string) ReplyResult {
 	// "กลับหน้าหลัก" re-shows the user's current diagnosis rich menu (re-links
-	// the same menu; does not change or clear their diagnosis).
+	// the same menu; does not change or clear their diagnosis). If they have not
+	// chosen a diagnosis yet, ask them to pick one first (they already see the
+	// default selector menu).
 	if isHomeCommand(userText) {
-		dx := u.resolveDiagnosis(userID)
+		dx, ok := u.explicitDiagnosis(userID)
+		if !ok {
+			return ReplyResult{Message: "กรุณาเลือกกลุ่มผลตรวจของคุณก่อนนะคะ เลือกได้จากเมนูด้านล่าง หรือพิมพ์: เลือก DX1, DX2, DX3, DX4 หรือ DX5"}
+		}
 		return ReplyResult{
 			Message:    "เลือกคำถามที่ต้องการจากเมนูด้านล่างได้เลยค่ะ",
 			RichMenuID: u.repo.RichMenuID(dx),
@@ -169,6 +174,23 @@ func buildReplyFromFAQ(faq entity.FAQ) ReplyResult {
 	}
 
 	return ReplyResult{Message: builder.String(), QuickReply: faq.QuickReply}
+}
+
+// explicitDiagnosis returns the diagnosis the user has actually chosen (from
+// the in-memory cache or the DB), NOT the default fallback. ok is false when
+// the user has not selected a diagnosis yet.
+func (u *ReplyUsecase) explicitDiagnosis(userID string) (string, bool) {
+	if dx, ok := u.readCachedDiagnosis(userID); ok && u.repo.IsDiagnosis(dx) {
+		return dx, true
+	}
+	if userID != "" && u.userRepo != nil {
+		dx, ok, err := u.userRepo.GetDiagnosisByLineUserID(userID)
+		if err == nil && ok && u.repo.IsDiagnosis(dx) {
+			u.rememberDiagnosis(userID, dx)
+			return dx, true
+		}
+	}
+	return "", false
 }
 
 func (u *ReplyUsecase) resolveDiagnosis(userID string) string {
