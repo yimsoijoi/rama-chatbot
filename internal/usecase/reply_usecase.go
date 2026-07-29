@@ -3,6 +3,7 @@ package usecase
 import (
 	"log/slog"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -121,9 +122,24 @@ func (u *ReplyUsecase) BuildReply(userID, userText string) ReplyResult {
 	return buildReplyFromFAQ(faq)
 }
 
+var (
+	reBR      = regexp.MustCompile(`(?i)<br\s*/?>`)
+	reHTMLTag = regexp.MustCompile(`<[^>]+>`)
+	reBlank   = regexp.MustCompile(`\n{3,}`)
+)
+
+// stripHTML turns the HTML-flavored answer text into plain text for LINE:
+// <br> becomes a newline, all other tags are removed.
+func stripHTML(s string) string {
+	s = reBR.ReplaceAllString(s, "\n")
+	s = reHTMLTag.ReplaceAllString(s, "")
+	s = reBlank.ReplaceAllString(s, "\n\n")
+	return strings.TrimSpace(s)
+}
+
 func buildReplyFromFAQ(faq entity.FAQ) ReplyResult {
 	var builder strings.Builder
-	builder.WriteString(faq.Answer)
+	builder.WriteString(stripHTML(faq.Answer))
 	if len(faq.QuickReply) > 0 {
 		builder.WriteString("\n\nคำถามต่อไปที่อาจสนใจ:\n")
 		for i, q := range faq.QuickReply {

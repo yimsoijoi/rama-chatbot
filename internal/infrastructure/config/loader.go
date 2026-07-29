@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode"
 
 	"github.com/yimsoijoi/rama-chatbot/internal/domain/entity"
 	"github.com/yimsoijoi/rama-chatbot/internal/observability"
@@ -146,7 +147,109 @@ func buildBotConfig(seed seedFile) *entity.BotConfig {
 		cfg.Diagnoses[dx] = diag
 	}
 
+	addQuickReplyAliases(cfg, seed.Items)
 	return cfg
+}
+
+// addQuickReplyAliases makes suggested quick-reply chips answerable. A chip's
+// text is a short paraphrase (e.g. "หายเองได้มากแค่ไหน?") that isn't itself a
+// match phrase. For each chip we find the FAQ (in the same dx or shared) whose
+// question contains that text and register the chip as one of its match
+// phrases — but only when the target is unambiguous, to avoid wrong routing.
+func addQuickReplyAliases(cfg *entity.BotConfig, items []seedItem) {
+	type ref struct{ dx, code, question string }
+	var all []ref
+	for _, it := range items {
+		code, dx, q := strings.TrimSpace(it.Code), strings.TrimSpace(it.DX), strings.TrimSpace(it.Question)
+		if code != "" && dx != "" && q != "" {
+			all = append(all, ref{dx, code, q})
+		}
+	}
+
+	for _, it := range items {
+		srcDX := strings.TrimSpace(it.DX)
+		for _, qr := range it.QuickReplies {
+			qr = strings.TrimSpace(qr)
+			if qr == "" {
+				continue
+			}
+			sqr := squash(qr)
+			if sqr == "" {
+				continue
+			}
+			// Prefer an exact question match; otherwise a unique containing
+			// question. Compare on a space/punctuation-insensitive form so a
+			// trailing "?" or spacing difference doesn't block the mapping.
+			var exact, contains []ref
+			for _, r := range all {
+				if r.dx != srcDX && r.dx != sharedDX {
+					continue
+				}
+				sq := squash(r.question)
+				if sq == sqr {
+					exact = append(exact, r)
+				} else if strings.Contains(sq, sqr) {
+					contains = append(contains, r)
+				}
+			}
+			var target *ref
+			switch {
+			case len(exact) == 1:
+				target = &exact[0]
+			case len(exact) == 0 && len(contains) == 1:
+				target = &contains[0]
+			default:
+				continue // none or ambiguous → leave unmapped (chip falls back gracefully)
+			}
+			addMatchPhrase(cfg, target.dx, target.code, qr)
+		}
+	}
+}
+
+func addMatchPhrase(cfg *entity.BotConfig, dx, code, phrase string) {
+	get := func() (entity.FAQ, bool) {
+		if dx == sharedDX {
+			f, ok := cfg.SharedFAQ[code]
+			return f, ok
+		}
+		if d, ok := cfg.Diagnoses[dx]; ok {
+			f, ok2 := d.FAQ[code]
+			return f, ok2
+		}
+		return entity.FAQ{}, false
+	}
+	faq, ok := get()
+	if !ok {
+		return
+	}
+	for _, p := range faq.MatchPhrases {
+		if strings.EqualFold(strings.TrimSpace(p), phrase) {
+			return // already present
+		}
+	}
+	faq.MatchPhrases = append(faq.MatchPhrases, phrase)
+	if dx == sharedDX {
+		cfg.SharedFAQ[code] = faq
+	} else {
+		cfg.Diagnoses[dx].FAQ[code] = faq
+	}
+}
+
+// squash lower-cases s and drops whitespace and common punctuation so that
+// paraphrase chips match their source question despite "?" or spacing diffs.
+func squash(s string) string {
+	var b strings.Builder
+	for _, r := range strings.ToLower(s) {
+		if unicode.IsSpace(r) {
+			continue
+		}
+		switch r {
+		case '?', '!', '.', ',', '(', ')', ':', ';', '"', '\'', 'ๆ': // incl. ๆ
+			continue
+		}
+		b.WriteRune(r)
+	}
+	return b.String()
 }
 
 func trimUnique(in []string) []string {
